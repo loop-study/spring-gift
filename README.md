@@ -20,9 +20,19 @@
 
 > 목표: 누구나 동일하게 실행 가능하고, 반복 실행할 수 있는 자동화된 테스트 환경. [A2]
 
-- [ ] `application-test.properties` 작성 (H2 in-memory + Flyway)
-- [ ] Application 컨텍스트 로딩 스모크 테스트
-- [ ] 주요 API 엔드포인트별 통합 테스트 기반 마련 (상품 CRUD 기준)
+- [ ] 테스트 인프라: `application-test.properties` 작성 (H2 in-memory + Flyway) + 스모크 테스트
+- [ ] Category API 통합 테스트
+- [ ] Member API 통합 테스트 (회원가입/로그인 → JWT)
+- [ ] Product API 통합 테스트
+- [ ] Option API 통합 테스트
+- [ ] Wish API 통합 테스트
+- [ ] Order API 통합 테스트
+
+> 테스트 작성 순서는 도메인 의존성이 적은 순서를 따른다.
+> Category/Member(의존 없음) → Product(Category 필요) → Option(Product 필요)
+> → Wish(Member + Product 필요) → Order(Member + Option 필요).
+> 앞 단계의 테스트 픽스처를 다음 단계에서 재사용하고,
+> Phase 2 서비스 추출 시 기존 작동이 깨지지 않았음을 이 테스트로 증명한다.
 
 ### Phase 2 — 구조 변경 (작동 유지)
 
