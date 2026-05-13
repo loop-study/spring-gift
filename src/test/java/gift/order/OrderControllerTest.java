@@ -75,14 +75,4 @@ class OrderControllerTest extends IntegrationTest {
         return new OrderRequest(optionId, quantity, message);
     }
 
-    private String loginAndGetToken(String email, String password) throws Exception {
-        var loginRequest = "{\"email\":\"" + email + "\",\"password\":\"" + password + "\"}";
-        var result = mockMvc.perform(post("/api/members/login")
-                .contentType(MediaType.APPLICATION_JSON)
-                .content(loginRequest))
-            .andExpect(status().isOk())
-            .andReturn();
-
-        return objectMapper.readTree(result.getResponse().getContentAsString()).get("token").asText();
-    }
 }
