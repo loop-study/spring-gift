@@ -20,39 +20,23 @@ public class WishService {
         return wishRepository.findByMemberId(memberId, pageable);
     }
 
-    public AddResult addWish(Long memberId, Long productId) {
-        Product product = productRepository.findById(productId).orElse(null);
-        if (product == null) {
-            return null;
-        }
-
-        Wish existing = wishRepository.findByMemberIdAndProductId(memberId, product.getId()).orElse(null);
-        if (existing != null) {
-            return new AddResult(existing, false);
-        }
-
-        Wish saved = wishRepository.save(new Wish(memberId, product));
-        return new AddResult(saved, true);
+    public Product findProductById(Long productId) {
+        return productRepository.findById(productId).orElse(null);
     }
 
-    public record AddResult(Wish wish, boolean created) {
+    public Wish findByMemberIdAndProductId(Long memberId, Long productId) {
+        return wishRepository.findByMemberIdAndProductId(memberId, productId).orElse(null);
     }
 
-    public RemoveResult removeWish(Long memberId, Long wishId) {
-        Wish wish = wishRepository.findById(wishId).orElse(null);
-        if (wish == null) {
-            return RemoveResult.NOT_FOUND;
-        }
+    public Wish save(Long memberId, Product product) {
+        return wishRepository.save(new Wish(memberId, product));
+    }
 
-        if (!wish.getMemberId().equals(memberId)) {
-            return RemoveResult.FORBIDDEN;
-        }
+    public Wish findById(Long id) {
+        return wishRepository.findById(id).orElse(null);
+    }
 
+    public void delete(Wish wish) {
         wishRepository.delete(wish);
-        return RemoveResult.DELETED;
-    }
-
-    public enum RemoveResult {
-        DELETED, NOT_FOUND, FORBIDDEN
     }
 }

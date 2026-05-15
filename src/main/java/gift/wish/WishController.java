@@ -50,16 +50,19 @@ public class WishController {
             return ResponseEntity.status(401).build();
         }
 
-        var result = wishService.addWish(member.getId(), request.productId());
-        if (result == null) {
+        var product = wishService.findProductById(request.productId());
+        if (product == null) {
             return ResponseEntity.notFound().build();
         }
 
-        if (result.created()) {
-            return ResponseEntity.created(URI.create("/api/wishes/" + result.wish().getId()))
-                .body(WishResponse.from(result.wish()));
+        var existing = wishService.findByMemberIdAndProductId(member.getId(), product.getId());
+        if (existing != null) {
+            return ResponseEntity.ok(WishResponse.from(existing));
         }
-        return ResponseEntity.ok(WishResponse.from(result.wish()));
+
+        var saved = wishService.save(member.getId(), product);
+        return ResponseEntity.created(URI.create("/api/wishes/" + saved.getId()))
+            .body(WishResponse.from(saved));
     }
 
     @DeleteMapping("/{id}")
@@ -72,10 +75,16 @@ public class WishController {
             return ResponseEntity.status(401).build();
         }
 
-        return switch (wishService.removeWish(member.getId(), id)) {
-            case DELETED -> ResponseEntity.noContent().build();
-            case NOT_FOUND -> ResponseEntity.notFound().build();
-            case FORBIDDEN -> ResponseEntity.status(403).build();
-        };
+        var wish = wishService.findById(id);
+        if (wish == null) {
+            return ResponseEntity.notFound().build();
+        }
+
+        if (!wish.getMemberId().equals(member.getId())) {
+            return ResponseEntity.status(403).build();
+        }
+
+        wishService.delete(wish);
+        return ResponseEntity.noContent().build();
     }
 }
