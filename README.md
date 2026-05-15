@@ -52,6 +52,7 @@
 ### Phase 3 — 작동 변경 (증거로 검증)
 
 > 목표: 누락된 작동을 구현하고, 데이터 정합성을 보장한다. 모든 변경은 테스트로 증명한다. [A3, B1, B2, B3, C1]
+> 상세 플랜은 [docs/phase3-plan.md](docs/phase3-plan.md)를 참고한다.
 
 - [ ] `@RestControllerAdvice` 글로벌 예외 핸들러 도입 — 3곳의 `@ExceptionHandler` 통합 [C1]
   - 전역 적용 시 기존에 500이던 응답이 400으로 바뀌므로 작동 변경에 해당
