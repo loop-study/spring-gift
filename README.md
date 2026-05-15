@@ -41,22 +41,24 @@
 
 **서비스 계층 추출** — 각 도메인별 1커밋
 
-- [ ] `OrderService` 추출 — OrderController의 주문 생성/조회 로직 이전
-- [ ] `WishService` 추출 — WishController의 위시 추가/삭제/조회 로직 이전
-- [ ] `MemberService` 추출 — MemberController 회원가입/로그인 + KakaoAuthController 카카오 로그인 로직 이전
-- [ ] `ProductService` 추출 — ProductController + AdminProductController 공통 로직 이전
-- [ ] `OptionService` 추출 — OptionController의 옵션 CRUD 로직 이전
-- [ ] `CategoryService` 추출 — CategoryController의 카테고리 CRUD 로직 이전
+- [x] `CategoryService` 추출 — CategoryController의 카테고리 CRUD 로직 이전
+- [x] `MemberService` 추출 — MemberController 회원가입/로그인 + KakaoAuthController 카카오 로그인 로직 이전
+- [x] `ProductService` 추출 — ProductController + AdminProductController 공통 로직 이전
+- [x] `OptionService` 추출 — OptionController의 옵션 CRUD 로직 이전
+- [x] `WishService` 추출 — WishController의 위시 추가/삭제/조회 로직 이전
+- [x] `OrderService` 추출 — OrderController의 주문 생성/조회 로직 이전
 
-**코드 정리** — 각 항목 1커밋
+**코드 정리**
 
-- [ ] `@RestControllerAdvice` 글로벌 예외 핸들러 도입 — 3곳의 `@ExceptionHandler` 통합 [C1]
 - [ ] 의미 없는 javadoc 제거 (`@author brian.kim @since 1.0` 등) [C2]
 
 ### Phase 3 — 작동 변경 (증거로 검증)
 
-> 목표: 누락된 작동을 구현하고, 데이터 정합성을 보장한다. 모든 변경은 테스트로 증명한다. [A3, B1, B2, B3]
+> 목표: 누락된 작동을 구현하고, 데이터 정합성을 보장한다. 모든 변경은 테스트로 증명한다. [A3, B1, B2, B3, C1]
 
+- [ ] `@RestControllerAdvice` 글로벌 예외 핸들러 도입 — 3곳의 `@ExceptionHandler` 통합 [C1]
+  - 전역 적용 시 기존에 500이던 응답이 400으로 바뀌므로 작동 변경에 해당
+  - 검증: 예외 응답 상태 코드 통합 테스트
 - [ ] `@Transactional` 도입 — 주문 생성 시 재고 차감/포인트 차감/주문 저장을 하나의 트랜잭션으로 [A3, B1]
   - 검증: 포인트 부족 시 재고가 원래대로 롤백되는지 통합 테스트
 - [ ] wish cleanup 구현 — 주문한 상품이 위시리스트에 있으면 제거 [B2]
