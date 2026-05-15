@@ -48,9 +48,6 @@
 - [x] `WishService` 추출 — WishController의 위시 추가/삭제/조회 로직 이전
 - [x] `OrderService` 추출 — OrderController의 주문 생성/조회 로직 이전
 
-**코드 정리**
-
-- [ ] 의미 없는 javadoc 제거 (`@author brian.kim @since 1.0` 등) [C2]
 
 ### Phase 3 — 작동 변경 (증거로 검증)
 
