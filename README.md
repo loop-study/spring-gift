@@ -20,13 +20,13 @@
 
 > 목표: 누구나 동일하게 실행 가능하고, 반복 실행할 수 있는 자동화된 테스트 환경. [A2]
 
-- [ ] 테스트 인프라: `application-test.properties` 작성 (H2 in-memory + Flyway) + 스모크 테스트
-- [ ] Category API 통합 테스트
-- [ ] Member API 통합 테스트 (회원가입/로그인 → JWT)
-- [ ] Product API 통합 테스트
-- [ ] Option API 통합 테스트
-- [ ] Wish API 통합 테스트
-- [ ] Order API 통합 테스트
+- [x] 테스트 인프라: `application-test.properties` 작성 (H2 in-memory + Flyway) + 스모크 테스트
+- [x] Category API 통합 테스트
+- [x] Member API 통합 테스트 (회원가입/로그인 → JWT)
+- [x] Product API 통합 테스트
+- [x] Option API 통합 테스트
+- [x] Wish API 통합 테스트
+- [x] Order API 통합 테스트
 
 > 테스트 작성 순서는 도메인 의존성이 적은 순서를 따른다.
 > Category/Member(의존 없음) → Product(Category 필요) → Option(Product 필요)
@@ -138,5 +138,6 @@
 |---|---|---|---|
 | 2026-05-11 | 탐색 | 전체 소스 파일 일괄 읽기 → 엔드포인트/도메인/문제점 표 정리 | OrderController에 트랜잭션 경계 없음, wish cleanup 누락, 서비스 계층 부재를 체계적으로 발견. legacy-info.md로 분석 결과 문서화. |
 | 2026-05-11 | 기획 | legacy-info.md 기반으로 Phase별 체크리스트 도출, 문제 번호와 커밋 단위를 1:1 매핑 | 구조 변경이 작동 변경의 전제임을 확인 — Phase 순서 의존성 확립. |
+| 2026-05-13 | 구현 | 도메인 의존성 순서대로 통합 테스트 작성 (Category→Member→Product→Option→Wish→Order, 총 37개 테스트). IntegrationTest 추상 클래스 추출로 Spring 컨텍스트 캐싱 및 공통 헬퍼 재사용. | 테스트 작성 순서를 의존성 기반으로 정하니 시드 데이터 설계가 자연스럽게 정리됨. @Transactional 롤백 전략으로 테스트 간 격리 확보. |
 
 각 Phase가 끝날 때마다 이 표에 항목을 추가한다.
