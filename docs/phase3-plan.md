@@ -4,17 +4,47 @@
 
 작동 변경은 Red-Green 패턴으로 진행한다. 먼저 실패하는 테스트를 작성한 뒤(Red) 코드를 수정하여 통과시킨다(Green).
 
-### Step 1: @RestControllerAdvice 글로벌 예외 핸들러
+### Step 1: 글로벌 예외 핸들러 + 커스텀 예외 도입
 
-**작동 변경**: OrderController 등 핸들러 없던 곳에서 IllegalArgumentException 시 500 → 400
+**목표**: 흩어진 `@ExceptionHandler`를 통합하고, `IllegalArgumentException` 남용을 커스텀 예외로 교체한다.
 
-| 커밋 | 유형 | 내용 |
-|------|------|------|
-| 1-a | test (Red) | 재고 초과 주문 시 400 기대하는 테스트 추가 |
-| 1-b | feat (Green) | GlobalExceptionHandler 도입 + 3곳 로컬 @ExceptionHandler 제거 |
+#### 커스텀 예외 계층 구조
 
-- `@RestControllerAdvice(annotations = RestController.class)`로 SSR 컨트롤러(@Controller) 제외
-- 제거 대상: ProductController, MemberController, OptionController의 handleIllegalArgument 메서드
+```
+BusinessException (abstract, RuntimeException)
+├── EntityNotFoundException        → 404
+├── DuplicateEntityException       → 409
+├── ValidationException            → 400
+├── InsufficientStockException     → 400
+├── InsufficientPointException     → 400
+├── AuthenticationException        → 401
+└── ForbiddenException             → 403
+```
+
+#### 세부 단계
+
+| Sub-step | 유형 | 내용 | 작동 변경 |
+|----------|------|------|-----------|
+| **1-1** | feat | `BusinessException` + 7개 서브클래스 생성 | 없음 (아직 사용 안 함) |
+| **1-2** | test→feat | `GlobalExceptionHandler` 도입 + 3곳 로컬 `@ExceptionHandler` 제거 | OrderController 500→400 |
+| **1-3** | test→feat | Product/Category null 반환 → `EntityNotFoundException` 전환 | 없음 (이미 404) |
+| **1-4** | test→feat | Option/Order/Wish null 반환 → `EntityNotFoundException` 전환 | 없음 (이미 404) |
+| **1-5** | test→feat | Auth null → `AuthenticationException`, 소유권 → `ForbiddenException` | 없음 (이미 401/403) |
+| **1-6** | test→feat | `IllegalArgumentException` → 커스텀 예외 (로그인 실패→401, 중복→409) | 로그인 실패 400→401, 중복 이메일 400→409 |
+| **1-7** | feat | `ErrorResponse` DTO 도입 (status, message 필드) | 응답 body에 에러 메시지 추가 |
+
+#### 작동 변경이 발생하는 곳 (Red-Green 필수)
+
+1. **Step 1-2**: 재고 초과 주문 등 OrderController에서 `IllegalArgumentException` 시 500 → 400
+2. **Step 1-6**: 로그인 실패 400→401, 중복 이메일 가입 400→409
+3. **Step 1-7**: 에러 응답 body가 빈 값 → `{"status": 400, "message": "..."}`
+
+#### 주의사항
+
+- `@RestControllerAdvice(annotations = RestController.class)`로 SSR 컨트롤러(`@Controller`) 제외
+- 제거 대상: ProductController, MemberController, OptionController의 `handleIllegalArgument` 메서드
+- Step 1-3~1-5는 외부 작동 변경 없음 (컨트롤러가 이미 null→404/401/403 처리), 내부 예외 방식만 변경
+- 기존 테스트 37개는 매 커밋마다 전체 통과 확인
 
 ### Step 2: @Transactional 도입
 
