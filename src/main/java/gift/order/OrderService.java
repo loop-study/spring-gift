@@ -47,13 +47,14 @@ public class OrderService {
         option.subtractQuantity(request.quantity());
         optionRepository.save(option);
 
-        // deduct points
-        var price = option.getProduct().getPrice() * request.quantity();
-        member.deductPoint(price);
+        // save order
+        Order order = new Order(option, member.getId(), request.quantity(), request.message());
+
+        // deduct points (domain calculates total price)
+        member.deductPoint(order.calculateTotalPrice());
         memberRepository.save(member);
 
-        // save order
-        Order saved = orderRepository.save(new Order(option, member.getId(), request.quantity(), request.message()));
+        Order saved = orderRepository.save(order);
 
         // remove wish if exists
         wishRepository.findByMemberIdAndProductId(member.getId(), option.getProduct().getId())

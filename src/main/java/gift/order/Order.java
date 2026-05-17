@@ -61,4 +61,8 @@ public class Order {
     public LocalDateTime getOrderDateTime() {
         return orderDateTime;
     }
+
+    public int calculateTotalPrice() {
+        return option.getProduct().getPrice() * quantity;
+    }
 }
