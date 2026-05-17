@@ -55,6 +55,10 @@ public class OrderService {
         // save order
         Order saved = orderRepository.save(new Order(option, member.getId(), request.quantity(), request.message()));
 
+        // remove wish if exists
+        wishRepository.findByMemberIdAndProductId(member.getId(), option.getProduct().getId())
+            .ifPresent(wishRepository::delete);
+
         // best-effort kakao notification
         sendKakaoMessageIfPossible(member, saved, option);
 
