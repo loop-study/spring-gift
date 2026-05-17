@@ -82,8 +82,8 @@
 
 **Step 5 — 카카오 메시지 트랜잭션 분리**
 
-- [ ] 5-a: `OrderCreatedEvent` + `OrderNotificationListener` 도입, 이벤트 발행으로 교체
-- [ ] 5-b: 롤백 시 카카오 미발송 검증 테스트
+- [x] 5-a: `OrderCreatedEvent` + `OrderNotificationListener` 도입, 이벤트 발행으로 교체
+- [x] 5-b: 롤백 시 카카오 미발송 검증 테스트
 
 ### Phase 4 — 환경 및 문서 정리 (선택)
 
