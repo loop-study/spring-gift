@@ -33,18 +33,12 @@ public class ProductController {
     @GetMapping("/{id}")
     public ResponseEntity<ProductResponse> getProduct(@PathVariable Long id) {
         Product product = productService.findById(id);
-        if (product == null) {
-            return ResponseEntity.notFound().build();
-        }
         return ResponseEntity.ok(ProductResponse.from(product));
     }
 
     @PostMapping
     public ResponseEntity<ProductResponse> createProduct(@Valid @RequestBody ProductRequest request) {
         Product saved = productService.create(request);
-        if (saved == null) {
-            return ResponseEntity.notFound().build();
-        }
         return ResponseEntity.created(URI.create("/api/products/" + saved.getId()))
             .body(ProductResponse.from(saved));
     }
@@ -55,9 +49,6 @@ public class ProductController {
         @Valid @RequestBody ProductRequest request
     ) {
         Product saved = productService.update(id, request);
-        if (saved == null) {
-            return ResponseEntity.notFound().build();
-        }
         return ResponseEntity.ok(ProductResponse.from(saved));
     }
 

@@ -1,5 +1,6 @@
 package gift.category;
 
+import gift.exception.EntityNotFoundException;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -21,10 +22,8 @@ public class CategoryService {
     }
 
     public Category update(Long id, CategoryRequest request) {
-        Category category = categoryRepository.findById(id).orElse(null);
-        if (category == null) {
-            return null;
-        }
+        Category category = categoryRepository.findById(id)
+            .orElseThrow(() -> new EntityNotFoundException("카테고리가 존재하지 않습니다. id=" + id));
         category.update(request.name(), request.color(), request.imageUrl(), request.description());
         return categoryRepository.save(category);
     }
