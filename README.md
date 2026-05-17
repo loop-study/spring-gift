@@ -57,13 +57,13 @@
 **Step 1 — 글로벌 예외 핸들러 + 커스텀 예외 도입** [C1]
 > 현황 분석은 [docs/legacy-exception-info.md](docs/legacy-exception-info.md)를 참고한다.
 
-- [ ] 1-1: `BusinessException` + 7개 서브클래스 생성
-- [ ] 1-2: `GlobalExceptionHandler` 도입 + 로컬 `@ExceptionHandler` 3곳 제거 (OrderController 500→400)
-- [ ] 1-3: Product/Category null 반환 → `EntityNotFoundException` 전환
-- [ ] 1-4: Option/Order/Wish null 반환 → `EntityNotFoundException` 전환
-- [ ] 1-5: Auth null → `AuthenticationException`, 소유권 → `ForbiddenException`
-- [ ] 1-6: `IllegalArgumentException` → 커스텀 예외 (로그인 실패 400→401, 중복 이메일 400→409)
-- [ ] 1-7: `ErrorResponse` DTO 도입 (응답 body에 에러 메시지 추가)
+- [x] 1-1: `BusinessException` + 7개 서브클래스 생성
+- [x] 1-2: `GlobalExceptionHandler` 도입 + 로컬 `@ExceptionHandler` 3곳 제거 (OrderController 500→400)
+- [x] 1-3: Product/Category null 반환 → `EntityNotFoundException` 전환
+- [x] 1-4: Option/Order/Wish null 반환 → `EntityNotFoundException` 전환
+- [x] 1-5: Auth null → `AuthenticationException`, 소유권 → `ForbiddenException`
+- [x] 1-6: `IllegalArgumentException` → 커스텀 예외 (로그인 실패 400→401, 중복 이메일/옵션명 400→409)
+- [x] 1-7: `ErrorResponse` DTO 도입 (응답 body에 에러 메시지 추가)
 
 **Step 2 — `@Transactional` 도입** [A3, B1]
 
@@ -160,6 +160,7 @@
 | 2026-05-11 | 기획 | legacy-info.md 기반으로 Phase별 체크리스트 도출, 문제 번호와 커밋 단위를 1:1 매핑 | 구조 변경이 작동 변경의 전제임을 확인 — Phase 순서 의존성 확립. |
 | 2026-05-13 | 구현 | 도메인 의존성 순서대로 통합 테스트 작성 (Category→Member→Product→Option→Wish→Order, 총 37개 테스트). IntegrationTest 추상 클래스 추출로 Spring 컨텍스트 캐싱 및 공통 헬퍼 재사용. | 테스트 작성 순서를 의존성 기반으로 정하니 시드 데이터 설계가 자연스럽게 정리됨. @Transactional 롤백 전략으로 테스트 간 격리 확보. |
 | 2026-05-15 | 구현 | Plan 에이전트로 서비스 추출 플랜 수립 후 도메인별 1커밋씩 6개 서비스 추출. 매 커밋마다 37개 통합 테스트 전체 통과 확인. Explore 에이전트로 추출 전후 작동 변경 여부 교차 검증. | `@RestControllerAdvice`를 구조 변경으로 분류했다가, 전역 적용 시 기존 500 응답이 400으로 바뀌는 점을 발견하여 Phase 3(작동 변경)으로 재분류. 분류 기준을 "코드 위치"가 아닌 "사용자가 관찰 가능한 결과"로 재정립. |
+| 2026-05-17 | 구현 | Explore 에이전트로 전체 예외 사용 현황 분석 → legacy-exception-info.md 문서화. Plan 에이전트로 Step 1을 7개 sub-step으로 세분화. Red-Green 패턴으로 10커밋에 걸쳐 글로벌 예외 핸들러 + 커스텀 예외 계층 도입. | 중복 옵션명도 DuplicateEntityException으로 교체 시 400→409 변경이 발생함을 테스트 실행 중 발견. 플랜에서 누락된 작동 변경을 테스트가 잡아줌 — Red-Green 패턴의 안전망 역할 확인. |
 
 ### 실패 사례와 교훈
 
