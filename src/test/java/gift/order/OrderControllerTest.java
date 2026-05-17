@@ -71,6 +71,22 @@ class OrderControllerTest extends IntegrationTest {
         result.andExpect(status().isUnauthorized());
     }
 
+    @Test
+    void 재고_초과_주문시_400을_반환한다() throws Exception {
+        // given: user1(id=2), 옵션 id=1 (수량 10) — 11개 주문하면 재고 초과
+        var token = loginAndGetToken("user1@example.com", "password1");
+        var request = createRequest(1L, 11, "재고 초과 테스트");
+
+        // when
+        var result = mockMvc.perform(post("/api/orders")
+            .header("Authorization", "Bearer " + token)
+            .contentType(MediaType.APPLICATION_JSON)
+            .content(objectMapper.writeValueAsString(request)));
+
+        // then
+        result.andExpect(status().isBadRequest());
+    }
+
     private OrderRequest createRequest(Long optionId, int quantity, String message) {
         return new OrderRequest(optionId, quantity, message);
     }
