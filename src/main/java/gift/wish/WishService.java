@@ -1,5 +1,6 @@
 package gift.wish;
 
+import gift.exception.EntityNotFoundException;
 import gift.product.Product;
 import gift.product.ProductRepository;
 import org.springframework.data.domain.Page;
@@ -21,7 +22,8 @@ public class WishService {
     }
 
     public Product findProductById(Long productId) {
-        return productRepository.findById(productId).orElse(null);
+        return productRepository.findById(productId)
+            .orElseThrow(() -> new EntityNotFoundException("상품이 존재하지 않습니다. id=" + productId));
     }
 
     public Wish findByMemberIdAndProductId(Long memberId, Long productId) {
@@ -33,7 +35,8 @@ public class WishService {
     }
 
     public Wish findById(Long id) {
-        return wishRepository.findById(id).orElse(null);
+        return wishRepository.findById(id)
+            .orElseThrow(() -> new EntityNotFoundException("위시가 존재하지 않습니다. id=" + id));
     }
 
     public void delete(Wish wish) {

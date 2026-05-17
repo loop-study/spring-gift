@@ -29,9 +29,6 @@ public class OptionController {
     @GetMapping
     public ResponseEntity<List<OptionResponse>> getOptions(@PathVariable Long productId) {
         List<Option> options = optionService.findByProductId(productId);
-        if (options == null) {
-            return ResponseEntity.notFound().build();
-        }
         List<OptionResponse> responses = options.stream()
             .map(OptionResponse::from)
             .toList();
@@ -44,9 +41,6 @@ public class OptionController {
         @Valid @RequestBody OptionRequest request
     ) {
         Option saved = optionService.create(productId, request);
-        if (saved == null) {
-            return ResponseEntity.notFound().build();
-        }
         URI location = URI.create("/api/products/" + productId + "/options/" + saved.getId());
         return ResponseEntity.created(location)
             .body(OptionResponse.from(saved));
@@ -57,10 +51,7 @@ public class OptionController {
         @PathVariable Long productId,
         @PathVariable Long optionId
     ) {
-        boolean deleted = optionService.delete(productId, optionId);
-        if (!deleted) {
-            return ResponseEntity.notFound().build();
-        }
+        optionService.delete(productId, optionId);
         return ResponseEntity.noContent().build();
     }
 

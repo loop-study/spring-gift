@@ -48,9 +48,6 @@ public class OrderController {
         }
 
         Order saved = orderService.createOrder(member, request);
-        if (saved == null) {
-            return ResponseEntity.notFound().build();
-        }
 
         return ResponseEntity.created(URI.create("/api/orders/" + saved.getId()))
             .body(OrderResponse.from(saved));

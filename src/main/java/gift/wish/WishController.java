@@ -51,9 +51,6 @@ public class WishController {
         }
 
         var product = wishService.findProductById(request.productId());
-        if (product == null) {
-            return ResponseEntity.notFound().build();
-        }
 
         var existing = wishService.findByMemberIdAndProductId(member.getId(), product.getId());
         if (existing != null) {
@@ -76,9 +73,6 @@ public class WishController {
         }
 
         var wish = wishService.findById(id);
-        if (wish == null) {
-            return ResponseEntity.notFound().build();
-        }
 
         if (!wish.getMemberId().equals(member.getId())) {
             return ResponseEntity.status(403).build();

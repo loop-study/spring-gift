@@ -1,5 +1,6 @@
 package gift.order;
 
+import gift.exception.EntityNotFoundException;
 import gift.member.Member;
 import gift.member.MemberRepository;
 import gift.option.Option;
@@ -37,10 +38,8 @@ public class OrderService {
 
     public Order createOrder(Member member, OrderRequest request) {
         // validate option
-        Option option = optionRepository.findById(request.optionId()).orElse(null);
-        if (option == null) {
-            return null;
-        }
+        Option option = optionRepository.findById(request.optionId())
+            .orElseThrow(() -> new EntityNotFoundException("옵션이 존재하지 않습니다. id=" + request.optionId()));
 
         // subtract stock
         option.subtractQuantity(request.quantity());
