@@ -1,6 +1,7 @@
 package gift.wish;
 
 import gift.auth.AuthenticationResolver;
+import gift.exception.ForbiddenException;
 import jakarta.validation.Valid;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -33,9 +34,6 @@ public class WishController {
         Pageable pageable
     ) {
         var member = authenticationResolver.extractMember(authorization);
-        if (member == null) {
-            return ResponseEntity.status(401).build();
-        }
         var wishes = wishService.findByMemberId(member.getId(), pageable).map(WishResponse::from);
         return ResponseEntity.ok(wishes);
     }
@@ -46,10 +44,6 @@ public class WishController {
         @Valid @RequestBody WishRequest request
     ) {
         var member = authenticationResolver.extractMember(authorization);
-        if (member == null) {
-            return ResponseEntity.status(401).build();
-        }
-
         var product = wishService.findProductById(request.productId());
 
         var existing = wishService.findByMemberIdAndProductId(member.getId(), product.getId());
@@ -68,14 +62,10 @@ public class WishController {
         @PathVariable Long id
     ) {
         var member = authenticationResolver.extractMember(authorization);
-        if (member == null) {
-            return ResponseEntity.status(401).build();
-        }
-
         var wish = wishService.findById(id);
 
         if (!wish.getMemberId().equals(member.getId())) {
-            return ResponseEntity.status(403).build();
+            throw new ForbiddenException("다른 사용자의 위시를 삭제할 수 없습니다.");
         }
 
         wishService.delete(wish);
