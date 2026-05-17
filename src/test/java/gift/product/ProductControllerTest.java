@@ -91,7 +91,8 @@ class ProductControllerTest extends IntegrationTest {
         var result = mockMvc.perform(get("/api/products/999999"));
 
         // then
-        result.andExpect(status().isNotFound());
+        result.andExpect(status().isNotFound())
+            .andExpect(content().string(org.hamcrest.Matchers.not(org.hamcrest.Matchers.emptyString())));
     }
 
     @Test
