@@ -3,6 +3,9 @@ package gift.member;
 import gift.auth.JwtProvider;
 import gift.auth.KakaoLoginClient;
 import gift.auth.KakaoLoginProperties;
+import gift.exception.AuthenticationException;
+import gift.exception.DuplicateEntityException;
+import gift.exception.EntityNotFoundException;
 import org.springframework.stereotype.Service;
 import org.springframework.web.util.UriComponentsBuilder;
 
@@ -31,7 +34,7 @@ public class MemberService {
 
     public String register(MemberRequest request) {
         if (memberRepository.existsByEmail(request.email())) {
-            throw new IllegalArgumentException("Email is already registered.");
+            throw new DuplicateEntityException("Email is already registered.");
         }
         Member member = memberRepository.save(new Member(request.email(), request.password()));
         return jwtProvider.createToken(member.getEmail());
@@ -39,10 +42,10 @@ public class MemberService {
 
     public String login(MemberRequest request) {
         Member member = memberRepository.findByEmail(request.email())
-            .orElseThrow(() -> new IllegalArgumentException("Invalid email or password."));
+            .orElseThrow(() -> new AuthenticationException("Invalid email or password."));
 
         if (member.getPassword() == null || !member.getPassword().equals(request.password())) {
-            throw new IllegalArgumentException("Invalid email or password.");
+            throw new AuthenticationException("Invalid email or password.");
         }
 
         return jwtProvider.createToken(member.getEmail());
@@ -89,7 +92,7 @@ public class MemberService {
 
     public Member findById(Long id) {
         return memberRepository.findById(id)
-            .orElseThrow(() -> new IllegalArgumentException("Member not found. id=" + id));
+            .orElseThrow(() -> new EntityNotFoundException("Member not found. id=" + id));
     }
 
     public void update(Long id, String email, String password) {

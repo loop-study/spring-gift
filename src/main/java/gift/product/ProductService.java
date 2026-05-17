@@ -3,6 +3,7 @@ package gift.product;
 import gift.category.Category;
 import gift.category.CategoryRepository;
 import gift.exception.EntityNotFoundException;
+import gift.exception.ValidationException;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
@@ -74,7 +75,7 @@ public class ProductService {
     private void validateName(String name) {
         List<String> errors = ProductNameValidator.validate(name);
         if (!errors.isEmpty()) {
-            throw new IllegalArgumentException(String.join(", ", errors));
+            throw new ValidationException(String.join(", ", errors));
         }
     }
 }

@@ -39,7 +39,7 @@ class OptionControllerTest extends IntegrationTest {
     }
 
     @Test
-    void 중복_옵션명으로_생성하면_400을_반환한다() throws Exception {
+    void 중복_옵션명으로_생성하면_409를_반환한다() throws Exception {
         // given: V2 데이터에 상품 1에 "스페이스 블랙 / M1 Pro" 존재
         var request = createRequest("스페이스 블랙 / M1 Pro", 5);
 
@@ -49,7 +49,7 @@ class OptionControllerTest extends IntegrationTest {
             .content(objectMapper.writeValueAsString(request)));
 
         // then
-        result.andExpect(status().isBadRequest());
+        result.andExpect(status().isConflict());
     }
 
     @Test

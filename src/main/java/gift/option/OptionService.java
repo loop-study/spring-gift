@@ -1,6 +1,8 @@
 package gift.option;
 
+import gift.exception.DuplicateEntityException;
 import gift.exception.EntityNotFoundException;
+import gift.exception.ValidationException;
 import gift.product.Product;
 import gift.product.ProductRepository;
 import org.springframework.stereotype.Service;
@@ -30,7 +32,7 @@ public class OptionService {
             .orElseThrow(() -> new EntityNotFoundException("상품이 존재하지 않습니다. id=" + productId));
 
         if (optionRepository.existsByProductIdAndName(productId, request.name())) {
-            throw new IllegalArgumentException("이미 존재하는 옵션명입니다.");
+            throw new DuplicateEntityException("이미 존재하는 옵션명입니다.");
         }
 
         return optionRepository.save(new Option(product, request.name(), request.quantity()));
@@ -42,7 +44,7 @@ public class OptionService {
 
         List<Option> options = optionRepository.findByProductId(productId);
         if (options.size() <= 1) {
-            throw new IllegalArgumentException("옵션이 1개인 상품은 옵션을 삭제할 수 없습니다.");
+            throw new ValidationException("옵션이 1개인 상품은 옵션을 삭제할 수 없습니다.");
         }
 
         Option option = optionRepository.findById(optionId)
@@ -58,7 +60,7 @@ public class OptionService {
     private void validateName(String name) {
         List<String> errors = OptionNameValidator.validate(name);
         if (!errors.isEmpty()) {
-            throw new IllegalArgumentException(String.join(", ", errors));
+            throw new ValidationException(String.join(", ", errors));
         }
     }
 }
