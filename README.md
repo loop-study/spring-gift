@@ -67,18 +67,18 @@
 
 **Step 2 — `@Transactional` 도입** [A3, B1]
 
-- [ ] 2-a: 포인트 부족 시 재고 롤백 검증 테스트 (Red)
-- [ ] 2-b: `OrderService.createOrder()`에 `@Transactional` 추가 (Green)
+- [x] 2-a: 포인트 부족 시 재고 롤백 검증 테스트 (Red)
+- [x] 2-b: `OrderService.createOrder()`에 `@Transactional` 추가 (Green)
 
 **Step 3 — Wish cleanup 구현** [B2]
 
-- [ ] 3-a: 주문 후 위시 개수 감소 검증 테스트 (Red)
-- [ ] 3-b: `OrderService.createOrder()`에 wish 삭제 로직 추가 (Green)
+- [x] 3-a: 주문 후 위시 개수 감소 검증 테스트 (Red)
+- [x] 3-b: `OrderService.createOrder()`에 wish 삭제 로직 추가 (Green)
 
 **Step 4 — 가격 계산 도메인 이전** [B3]
 
-- [ ] 4-a: `Order.calculateTotalPrice()` 단위 테스트 (Red)
-- [ ] 4-b: Order에 메서드 추가 + OrderService에서 사용 (Green)
+- [x] 4-a: `Order.calculateTotalPrice()` 단위 테스트 (Red)
+- [x] 4-b: Order에 메서드 추가 + OrderService에서 사용 (Green)
 
 **Step 5 — 카카오 메시지 트랜잭션 분리**
 
