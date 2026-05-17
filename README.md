@@ -54,17 +54,36 @@
 > 목표: 누락된 작동을 구현하고, 데이터 정합성을 보장한다. 모든 변경은 테스트로 증명한다. [A3, B1, B2, B3, C1]
 > 상세 플랜은 [docs/phase3-plan.md](docs/phase3-plan.md)를 참고한다.
 
-- [ ] `@RestControllerAdvice` 글로벌 예외 핸들러 도입 — 3곳의 `@ExceptionHandler` 통합 [C1]
-  - 전역 적용 시 기존에 500이던 응답이 400으로 바뀌므로 작동 변경에 해당
-  - 검증: 예외 응답 상태 코드 통합 테스트
-- [ ] `@Transactional` 도입 — 주문 생성 시 재고 차감/포인트 차감/주문 저장을 하나의 트랜잭션으로 [A3, B1]
-  - 검증: 포인트 부족 시 재고가 원래대로 롤백되는지 통합 테스트
-- [ ] wish cleanup 구현 — 주문한 상품이 위시리스트에 있으면 제거 [B2]
-  - 검증: 주문 생성 후 해당 상품의 위시가 삭제되었는지 통합 테스트
-- [ ] 가격 계산 도메인 이전 — 총액 계산을 컨트롤러가 아닌 도메인이 담당 [B3]
-  - 검증: 단위 테스트로 계산 결과 검증
-- [ ] 카카오 메시지 발송 트랜잭션 분리 — 커밋 후 발송으로 변경
-  - 검증: 트랜잭션 롤백 시 메시지가 발송되지 않는지 테스트
+**Step 1 — 글로벌 예외 핸들러 + 커스텀 예외 도입** [C1]
+> 현황 분석은 [docs/legacy-exception-info.md](docs/legacy-exception-info.md)를 참고한다.
+
+- [ ] 1-1: `BusinessException` + 7개 서브클래스 생성
+- [ ] 1-2: `GlobalExceptionHandler` 도입 + 로컬 `@ExceptionHandler` 3곳 제거 (OrderController 500→400)
+- [ ] 1-3: Product/Category null 반환 → `EntityNotFoundException` 전환
+- [ ] 1-4: Option/Order/Wish null 반환 → `EntityNotFoundException` 전환
+- [ ] 1-5: Auth null → `AuthenticationException`, 소유권 → `ForbiddenException`
+- [ ] 1-6: `IllegalArgumentException` → 커스텀 예외 (로그인 실패 400→401, 중복 이메일 400→409)
+- [ ] 1-7: `ErrorResponse` DTO 도입 (응답 body에 에러 메시지 추가)
+
+**Step 2 — `@Transactional` 도입** [A3, B1]
+
+- [ ] 2-a: 포인트 부족 시 재고 롤백 검증 테스트 (Red)
+- [ ] 2-b: `OrderService.createOrder()`에 `@Transactional` 추가 (Green)
+
+**Step 3 — Wish cleanup 구현** [B2]
+
+- [ ] 3-a: 주문 후 위시 개수 감소 검증 테스트 (Red)
+- [ ] 3-b: `OrderService.createOrder()`에 wish 삭제 로직 추가 (Green)
+
+**Step 4 — 가격 계산 도메인 이전** [B3]
+
+- [ ] 4-a: `Order.calculateTotalPrice()` 단위 테스트 (Red)
+- [ ] 4-b: Order에 메서드 추가 + OrderService에서 사용 (Green)
+
+**Step 5 — 카카오 메시지 트랜잭션 분리**
+
+- [ ] 5-a: `OrderCreatedEvent` + `OrderNotificationListener` 도입, 이벤트 발행으로 교체
+- [ ] 5-b: 롤백 시 카카오 미발송 검증 테스트
 
 ### Phase 4 — 환경 및 문서 정리 (선택)
 
