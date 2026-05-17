@@ -1,13 +1,19 @@
 package gift.order;
 
 import gift.IntegrationTest;
+import gift.wish.WishRepository;
 import org.junit.jupiter.api.Test;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
 
+import static org.assertj.core.api.Assertions.assertThat;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
 class OrderControllerTest extends IntegrationTest {
+
+    @Autowired
+    private WishRepository wishRepository;
 
     @Test
     void 주문_목록을_조회한다() throws Exception {
@@ -85,6 +91,26 @@ class OrderControllerTest extends IntegrationTest {
 
         // then
         result.andExpect(status().isBadRequest());
+    }
+
+    @Test
+    void 주문_생성_시_해당_상품의_위시가_삭제된다() throws Exception {
+        // given: V2 데이터에 user1(id=2)은 product1(id=1)에 위시가 있음
+        // option1(id=1)은 product1의 옵션
+        var token = loginAndGetToken("user1@example.com", "password1");
+        var request = createRequest(1L, 1, "위시 클린업 테스트");
+
+        assertThat(wishRepository.findByMemberIdAndProductId(2L, 1L)).isPresent();
+
+        // when
+        mockMvc.perform(post("/api/orders")
+                .header("Authorization", "Bearer " + token)
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(objectMapper.writeValueAsString(request)))
+            .andExpect(status().isCreated());
+
+        // then: 위시가 삭제되어야 한다
+        assertThat(wishRepository.findByMemberIdAndProductId(2L, 1L)).isEmpty();
     }
 
     private OrderRequest createRequest(Long optionId, int quantity, String message) {
