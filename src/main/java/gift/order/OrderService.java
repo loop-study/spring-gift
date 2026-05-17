@@ -9,6 +9,7 @@ import gift.wish.WishRepository;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 @Service
 public class OrderService {
@@ -36,6 +37,7 @@ public class OrderService {
         return orderRepository.findByMemberId(memberId, pageable);
     }
 
+    @Transactional
     public Order createOrder(Member member, OrderRequest request) {
         // validate option
         Option option = optionRepository.findById(request.optionId())
