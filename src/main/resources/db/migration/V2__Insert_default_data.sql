@@ -19,11 +19,11 @@ insert into product (name, price, image_url, category_id)
 values ('한우 등심 1kg', 65000, 'https://example.com/images/beef.jpg', 3);
 
 insert into member (email, password, point)
-values ('admin@example.com', 'admin1234', 10000000);
+values ('admin@example.com', '$2a$10$hIzc4RJqmfIG1t4MWvkMzujzJlZEJEl.FptaBV9Cysj9BHt7nc4KW', 10000000);
 insert into member (email, password, point)
-values ('user1@example.com', 'password1', 5000000);
+values ('user1@example.com', '$2a$10$JvlEy17wgvYaLLp0Y45a/./UYSwFgwXlr7EuERtxaoEgB5JVgpvdO', 5000000);
 insert into member (email, password, point)
-values ('user2@example.com', 'password2', 3000000);
+values ('user2@example.com', '$2a$10$6lyN3B.q8dD8FpjQegHU7uT7Mkxbfb6HN0s0thxZcg3H7EmDBw85S', 3000000);
 
 insert into wish (member_id, product_id)
 values (2, 1);

@@ -6,6 +6,7 @@ import gift.auth.KakaoLoginProperties;
 import gift.exception.AuthenticationException;
 import gift.exception.DuplicateEntityException;
 import gift.exception.EntityNotFoundException;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.web.util.UriComponentsBuilder;
 
@@ -17,6 +18,7 @@ public class MemberService {
     private final JwtProvider jwtProvider;
     private final KakaoLoginClient kakaoLoginClient;
     private final KakaoLoginProperties kakaoLoginProperties;
+    private final BCryptPasswordEncoder passwordEncoder = new BCryptPasswordEncoder();
 
     public MemberService(
         MemberRepository memberRepository,
@@ -36,7 +38,8 @@ public class MemberService {
         if (memberRepository.existsByEmail(request.email())) {
             throw new DuplicateEntityException("Email is already registered.");
         }
-        Member member = memberRepository.save(new Member(request.email(), request.password()));
+        String encoded = passwordEncoder.encode(request.password());
+        Member member = memberRepository.save(new Member(request.email(), encoded));
         return jwtProvider.createToken(member.getEmail());
     }
 
@@ -44,7 +47,7 @@ public class MemberService {
         Member member = memberRepository.findByEmail(request.email())
             .orElseThrow(() -> new AuthenticationException("Invalid email or password."));
 
-        if (member.getPassword() == null || !member.getPassword().equals(request.password())) {
+        if (member.getPassword() == null || !passwordEncoder.matches(request.password(), member.getPassword())) {
             throw new AuthenticationException("Invalid email or password.");
         }
 
@@ -87,7 +90,7 @@ public class MemberService {
     }
 
     public Member createMember(String email, String password) {
-        return memberRepository.save(new Member(email, password));
+        return memberRepository.save(new Member(email, passwordEncoder.encode(password)));
     }
 
     public Member findById(Long id) {
@@ -97,7 +100,7 @@ public class MemberService {
 
     public void update(Long id, String email, String password) {
         Member member = findById(id);
-        member.update(email, password);
+        member.update(email, passwordEncoder.encode(password));
         memberRepository.save(member);
     }
 
