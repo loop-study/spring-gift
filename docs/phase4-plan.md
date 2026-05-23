@@ -56,15 +56,9 @@
 
 **검증**: 타임아웃 설정이 적용되었는지 빈 설정 확인 (구조 변경, 외부 작동 동일)
 
-### Step 4 — RestClient baseUrl 정리
+### ~~Step 4 — RestClient baseUrl 정리~~ (건너뜀)
 
-**목표**: 카카오 API URL 하드코딩을 제거한다.
-
-**변경 내용**:
-- `KakaoLoginClient`: `kauth.kakao.com`(인증)과 `kapi.kakao.com`(API) 두 용도의 RestClient를 baseUrl로 구분
-- `KakaoMessageClient`: `kapi.kakao.com` baseUrl 설정
-
-**검증**: 구조 변경, 외부 작동 동일
+**건너뛴 사유**: `RestClient.Builder.baseUrl()`로 추출해도 생성자에 URL이 하드코딩되는 것은 동일하다. `application.properties`로 외부화하면 해결되지만, 카카오 API URL은 변경될 일이 사실상 없어 실질적인 가치가 없다고 판단했다.
 
 ### Step 5 — .gitignore 시크릿 보호 + 환경변수 가이드
 

@@ -94,7 +94,7 @@
 - [ ] Step 1: 외부 API 호출 로깅 추가 (KakaoLoginClient, KakaoMessageClient, OrderNotificationListener)
 - [ ] Step 2: 카카오 로그인 에러 핸들링 (500→401, 에러 코드 log.warn)
 - [ ] Step 3: RestClient 타임아웃 설정 (connect/read 5초)
-- [ ] Step 4: RestClient baseUrl 정리 (URL 하드코딩 제거)
+- [x] ~~Step 4: RestClient baseUrl 정리~~ (건너뜀 — URL 변경 가능성 없어 실익 없음)
 - [ ] Step 5: .gitignore 시크릿 보호 + 환경변수 가이드
 
 ---
