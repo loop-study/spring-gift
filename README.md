@@ -97,6 +97,25 @@
 - [x] ~~Step 4: RestClient baseUrl 정리~~ (건너뜀 — URL 변경 가능성 없어 실익 없음)
 - [x] Step 5: .gitignore 시크릿 보호
 
+### Phase 5 — 보안 강화 및 구조 개선 (OWASP 기반)
+
+> 목표: OWASP Top 10 기준으로 보안 취약점을 해소하고, 반복 코드를 정리한다.
+
+**보안 (높음)**
+
+- [ ] 비밀번호 해싱 (BCrypt) — 현재 평문 저장/비교 [OWASP A02]
+- [ ] 어드민 페이지 접근 제어 — `/admin/**` 인증/인가 없음 [OWASP A01]
+
+**구조 개선 (중간)**
+
+- [ ] 인증 코드 중복 제거 — `@RequestHeader + extractMember()` 5곳 반복 → `HandlerMethodArgumentResolver` 도입
+- [ ] 핵심 이벤트 로깅 — 회원가입/로그인/주문 생성, GlobalExceptionHandler 예외 로그 [OWASP A09]
+
+**선택 (낮음)**
+
+- [ ] CORS 설정 [OWASP A05]
+- [ ] 로그인 시도 횟수 제한 [OWASP A07]
+
 ---
 
 ## 구현 전략
