@@ -85,11 +85,17 @@
 - [x] 5-a: `OrderCreatedEvent` + `OrderNotificationListener` 도입, 이벤트 발행으로 교체
 - [x] 5-b: 롤백 시 카카오 미발송 검증 테스트
 
-### Phase 4 — 환경 및 문서 정리 (선택)
+### Phase 4 — 외부 API 연동 안정화
 
-- [ ] 카카오 API 환경변수 가이드 정리 (application-local.properties 또는 .env)
-- [ ] `.gitignore` 시크릿 보호 확인
+> 목표: 외부 API(카카오) 연동의 안정성을 높인다. 타임아웃, 에러 핸들링, 로깅, 시크릿 보호.
+> 상세 플랜은 [docs/phase4-plan.md](docs/phase4-plan.md)를 참고한다.
+
 - [x] ADR 추가 작성 (트랜잭션 경계, 카카오 메시지 발송 시점, 글로벌 예외 핸들러 범위)
+- [ ] Step 1: 외부 API 호출 로깅 추가 (KakaoLoginClient, KakaoMessageClient, OrderNotificationListener)
+- [ ] Step 2: 카카오 로그인 에러 핸들링 (500→401, 에러 코드 log.warn)
+- [ ] Step 3: RestClient 타임아웃 설정 (connect/read 5초)
+- [ ] Step 4: RestClient baseUrl 정리 (URL 하드코딩 제거)
+- [ ] Step 5: .gitignore 시크릿 보호 + 환경변수 가이드
 
 ---
 
@@ -174,15 +180,5 @@
 - 테스트 통과 ≠ 원칙 준수. 테스트는 외부 작동만 검증하고, 커밋 원칙(구조/작동 분리)은 사람이 직접 확인해야 한다.
 - AI 산출물을 승인할 때 "다른 서비스와 패턴이 동일한가?"를 체크리스트에 넣어야 한다.
 - 새로운 타입(enum, record) 도입은 설계 결정이므로, 단순 추출 커밋과 분리해야 한다.
-
-#### HTTP 테스트 파일에 존재하지 않는 API 포함
-
-**문제 정의**: AI가 `.http` 테스트 파일을 작성하면서 실제로 존재하지 않는 엔드포인트(`PUT /api/members/point`)를 포함했다. 포인트 충전은 어드민 SSR 전용(`POST /admin/members/{id}/charge-point`)인데, REST API가 있다고 가정하고 작성한 것이다.
-
-**발생 원인**: AI가 "주문 테스트를 위해 포인트 충전이 필요하다"는 맥락에서 합리적으로 보이는 엔드포인트를 만들어냈다. 실제 코드를 확인하지 않고 관례적인 URL 패턴으로 생성한 것이다.
-
-**교훈**:
-- AI가 생성한 API 호출은 반드시 실제 엔드포인트와 대조해야 한다. 그럴듯하게 보이는 URL이 실제로 존재한다는 보장이 없다.
-- 테스트 파일도 코드와 동일하게 검증 대상이다.
 
 각 Phase가 끝날 때마다 이 표에 항목을 추가한다.
