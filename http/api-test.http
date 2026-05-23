@@ -21,12 +21,11 @@ GET http://localhost:8080/api/products
 ### 5. 상품 옵션 조회 (상품 ID=1)
 GET http://localhost:8080/api/products/1/options
 
-### 6. 포인트 충전
-PUT http://localhost:8080/api/members/point
-Authorization: Bearer {{token}}
-Content-Type: application/json
+### 6. 포인트 충전 (어드민 — 회원 ID 확인 후 사용)
+POST http://localhost:8080/admin/members/1/charge-point
+Content-Type: application/x-www-form-urlencoded
 
-{"amount": 10000000}
+amount=10000000
 
 ### 7. 위시 추가 (상품 ID=1)
 POST http://localhost:8080/api/wishes
