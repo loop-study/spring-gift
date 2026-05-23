@@ -47,7 +47,23 @@
 
 **논의 필요**: 어드민 인증 방식 — JWT 헤더 vs 세션/쿠키. SSR 페이지이므로 세션 기반이 자연스러움.
 
-### Step 3 — 인증 코드 중복 제거 [구조 개선]
+### Step 3 — 도메인 간 의존성 정리 [구조 개선]
+
+**목표**: `OrderService`가 다른 도메인의 Repository를 직접 참조하는 구조를 개선하여, 각 도메인의 Service를 통해 접근하도록 한다.
+
+**현황**: `OrderService`가 `OptionRepository`, `MemberRepository`, `WishRepository`를 직접 주입받아 사용 중. 도메인 경계를 넘어 Repository에 직접 접근하면 해당 도메인의 비즈니스 로직을 우회하게 된다.
+
+**변경 내용**:
+- `OrderService`의 Repository 의존성을 Service 의존성으로 교체
+- `OptionService`에 재고 차감 메서드 추가
+- `MemberService`에 포인트 차감 메서드 추가
+- `WishService`에 위시 삭제 메서드 추가
+- `OrderService`는 조율(orchestration) 역할만 수행
+
+**검증**: 구조 변경, 기존 테스트 전체 통과 확인
+
+### Step 4 — 인증 코드 중복 제거 [구조 개선]
+
 
 **목표**: `@RequestHeader("Authorization") + extractMember()` 반복 패턴을 제거한다.
 
@@ -73,7 +89,7 @@ public ResponseEntity<?> getOrders(@LoginMember Member member, Pageable pageable
 
 **검증**: 구조 변경, 기존 테스트 전체 통과 확인
 
-### Step 4 — 핵심 이벤트 로깅 [OWASP A09]
+### Step 5 — 핵심 이벤트 로깅 [OWASP A09]
 
 **목표**: 인증, 주문, 예외 등 핵심 이벤트를 로그로 추적할 수 있게 한다.
 

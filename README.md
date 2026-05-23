@@ -109,6 +109,7 @@
 
 **구조 개선 (중간)**
 
+- [ ] 도메인 간 의존성 정리 — `OrderService`가 다른 도메인의 Repository를 직접 참조 → 각 도메인 Service를 통하도록 개선
 - [ ] 인증 코드 중복 제거 — `@RequestHeader + extractMember()` 5곳 반복 → `HandlerMethodArgumentResolver` 도입
 - [ ] 핵심 이벤트 로깅 — 회원가입/로그인/주문 생성, GlobalExceptionHandler 예외 로그 [OWASP A09]
 
