@@ -100,6 +100,7 @@
 ### Phase 5 — 보안 강화 및 구조 개선 (OWASP 기반)
 
 > 목표: OWASP Top 10 기준으로 보안 취약점을 해소하고, 반복 코드를 정리한다.
+> 상세 플랜은 [docs/phase5-plan.md](docs/phase5-plan.md)를 참고한다.
 
 **보안 (높음)**
 
