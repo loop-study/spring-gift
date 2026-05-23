@@ -2,12 +2,15 @@ package gift.auth;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonProperty;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Component;
 import org.springframework.util.LinkedMultiValueMap;
 import org.springframework.web.client.RestClient;
 
 @Component
 public class KakaoLoginClient {
+    private static final Logger log = LoggerFactory.getLogger(KakaoLoginClient.class);
     private final KakaoLoginProperties properties;
     private final RestClient restClient;
 
@@ -24,20 +27,26 @@ public class KakaoLoginClient {
         params.add("code", code);
         params.add("client_secret", properties.clientSecret());
 
-        return restClient.post()
+        log.info("카카오 토큰 교환 요청");
+        KakaoTokenResponse response = restClient.post()
             .uri("https://kauth.kakao.com/oauth/token")
             .header("Content-Type", "application/x-www-form-urlencoded")
             .body(params)
             .retrieve()
             .body(KakaoTokenResponse.class);
+        log.info("카카오 토큰 교환 성공");
+        return response;
     }
 
     public KakaoUserResponse requestUserInfo(String accessToken) {
-        return restClient.get()
+        log.info("카카오 사용자 정보 조회 요청");
+        KakaoUserResponse response = restClient.get()
             .uri("https://kapi.kakao.com/v2/user/me")
             .header("Authorization", "Bearer " + accessToken)
             .retrieve()
             .body(KakaoUserResponse.class);
+        log.info("카카오 사용자 정보 조회 성공. email={}", response.email());
+        return response;
     }
 
     @JsonIgnoreProperties(ignoreUnknown = true)
