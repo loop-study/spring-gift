@@ -1,7 +1,7 @@
 package gift.product;
 
 import gift.category.Category;
-import gift.category.CategoryRepository;
+import gift.category.CategoryService;
 import gift.exception.EntityNotFoundException;
 import gift.exception.ValidationException;
 import org.springframework.data.domain.Page;
@@ -13,11 +13,11 @@ import java.util.List;
 @Service
 public class ProductService {
     private final ProductRepository productRepository;
-    private final CategoryRepository categoryRepository;
+    private final CategoryService categoryService;
 
-    public ProductService(ProductRepository productRepository, CategoryRepository categoryRepository) {
+    public ProductService(ProductRepository productRepository, CategoryService categoryService) {
         this.productRepository = productRepository;
-        this.categoryRepository = categoryRepository;
+        this.categoryService = categoryService;
     }
 
     public Page<Product> findAll(Pageable pageable) {
@@ -34,12 +34,11 @@ public class ProductService {
     }
 
     public Category findCategoryById(Long id) {
-        return categoryRepository.findById(id)
-            .orElseThrow(() -> new EntityNotFoundException("카테고리가 존재하지 않습니다. id=" + id));
+        return categoryService.findById(id);
     }
 
     public List<Category> findAllCategories() {
-        return categoryRepository.findAll();
+        return categoryService.findAll();
     }
 
     public Product create(ProductRequest request) {
