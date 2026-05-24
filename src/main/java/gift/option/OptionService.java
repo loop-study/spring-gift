@@ -38,6 +38,13 @@ public class OptionService {
         return optionRepository.save(new Option(product, request.name(), request.quantity()));
     }
 
+    public Option subtractQuantity(Long optionId, int quantity) {
+        Option option = optionRepository.findById(optionId)
+            .orElseThrow(() -> new EntityNotFoundException("옵션이 존재하지 않습니다. id=" + optionId));
+        option.subtractQuantity(quantity);
+        return optionRepository.save(option);
+    }
+
     public void delete(Long productId, Long optionId) {
         productRepository.findById(productId)
             .orElseThrow(() -> new EntityNotFoundException("상품이 존재하지 않습니다. id=" + productId));

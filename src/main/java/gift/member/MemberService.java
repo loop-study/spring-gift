@@ -104,6 +104,12 @@ public class MemberService {
         memberRepository.save(member);
     }
 
+    public void deductPoint(Long id, int amount) {
+        Member member = findById(id);
+        member.deductPoint(amount);
+        memberRepository.save(member);
+    }
+
     public void chargePoint(Long id, int amount) {
         Member member = findById(id);
         member.chargePoint(amount);

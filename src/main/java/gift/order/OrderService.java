@@ -1,11 +1,10 @@
 package gift.order;
 
-import gift.exception.EntityNotFoundException;
 import gift.member.Member;
-import gift.member.MemberRepository;
+import gift.member.MemberService;
 import gift.option.Option;
-import gift.option.OptionRepository;
-import gift.wish.WishRepository;
+import gift.option.OptionService;
+import gift.wish.WishService;
 import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -15,22 +14,22 @@ import org.springframework.transaction.annotation.Transactional;
 @Service
 public class OrderService {
     private final OrderRepository orderRepository;
-    private final OptionRepository optionRepository;
-    private final MemberRepository memberRepository;
-    private final WishRepository wishRepository;
+    private final OptionService optionService;
+    private final MemberService memberService;
+    private final WishService wishService;
     private final ApplicationEventPublisher eventPublisher;
 
     public OrderService(
         OrderRepository orderRepository,
-        OptionRepository optionRepository,
-        MemberRepository memberRepository,
-        WishRepository wishRepository,
+        OptionService optionService,
+        MemberService memberService,
+        WishService wishService,
         ApplicationEventPublisher eventPublisher
     ) {
         this.orderRepository = orderRepository;
-        this.optionRepository = optionRepository;
-        this.memberRepository = memberRepository;
-        this.wishRepository = wishRepository;
+        this.optionService = optionService;
+        this.memberService = memberService;
+        this.wishService = wishService;
         this.eventPublisher = eventPublisher;
     }
 
@@ -40,26 +39,19 @@ public class OrderService {
 
     @Transactional
     public Order createOrder(Member member, OrderRequest request) {
-        // validate option
-        Option option = optionRepository.findById(request.optionId())
-            .orElseThrow(() -> new EntityNotFoundException("옵션이 존재하지 않습니다. id=" + request.optionId()));
-
         // subtract stock
-        option.subtractQuantity(request.quantity());
-        optionRepository.save(option);
+        Option option = optionService.subtractQuantity(request.optionId(), request.quantity());
 
         // save order
         Order order = new Order(option, member.getId(), request.quantity(), request.message());
 
         // deduct points (domain calculates total price)
-        member.deductPoint(order.calculateTotalPrice());
-        memberRepository.save(member);
+        memberService.deductPoint(member.getId(), order.calculateTotalPrice());
 
         Order saved = orderRepository.save(order);
 
         // remove wish if exists
-        wishRepository.findByMemberIdAndProductId(member.getId(), option.getProduct().getId())
-            .ifPresent(wishRepository::delete);
+        wishService.removeByMemberAndProduct(member.getId(), option.getProduct().getId());
 
         // publish event for post-commit notification
         eventPublisher.publishEvent(

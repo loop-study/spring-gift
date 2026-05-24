@@ -39,6 +39,11 @@ public class WishService {
             .orElseThrow(() -> new EntityNotFoundException("위시가 존재하지 않습니다. id=" + id));
     }
 
+    public void removeByMemberAndProduct(Long memberId, Long productId) {
+        wishRepository.findByMemberIdAndProductId(memberId, productId)
+            .ifPresent(wishRepository::delete);
+    }
+
     public void delete(Wish wish) {
         wishRepository.delete(wish);
     }
