@@ -42,6 +42,11 @@ public class MemberService {
         return memberRepository.save(new Member(email, passwordEncoder.encode(password)));
     }
 
+    public Member getMemberByEmail(String email) {
+        return memberRepository.findByEmail(email)
+            .orElseThrow(() -> new EntityNotFoundException("Member not found. email=" + email));
+    }
+
     public Member getMember(Long id) {
         return memberRepository.findById(id)
             .orElseThrow(() -> new EntityNotFoundException("Member not found. id=" + id));
