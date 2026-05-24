@@ -2,7 +2,7 @@ package gift.wish;
 
 import gift.exception.EntityNotFoundException;
 import gift.product.Product;
-import gift.product.ProductRepository;
+import gift.product.ProductService;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
@@ -10,11 +10,11 @@ import org.springframework.stereotype.Service;
 @Service
 public class WishService {
     private final WishRepository wishRepository;
-    private final ProductRepository productRepository;
+    private final ProductService productService;
 
-    public WishService(WishRepository wishRepository, ProductRepository productRepository) {
+    public WishService(WishRepository wishRepository, ProductService productService) {
         this.wishRepository = wishRepository;
-        this.productRepository = productRepository;
+        this.productService = productService;
     }
 
     public Page<Wish> findByMemberId(Long memberId, Pageable pageable) {
@@ -22,8 +22,7 @@ public class WishService {
     }
 
     public Product findProductById(Long productId) {
-        return productRepository.findById(productId)
-            .orElseThrow(() -> new EntityNotFoundException("상품이 존재하지 않습니다. id=" + productId));
+        return productService.findById(productId);
     }
 
     public Wish findByMemberIdAndProductId(Long memberId, Long productId) {
