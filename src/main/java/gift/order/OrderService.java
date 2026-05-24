@@ -5,6 +5,8 @@ import gift.member.MemberService;
 import gift.option.Option;
 import gift.option.OptionService;
 import gift.wish.WishService;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -13,6 +15,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 @Service
 public class OrderService {
+    private static final Logger log = LoggerFactory.getLogger(OrderService.class);
     private final OrderRepository orderRepository;
     private final OptionService optionService;
     private final MemberService memberService;
@@ -49,6 +52,8 @@ public class OrderService {
         memberService.deductPoint(member.getId(), order.calculateTotalPrice());
 
         Order saved = orderRepository.save(order);
+        log.info("주문 생성. orderId={}, memberId={}, optionId={}, quantity={}, totalPrice={}",
+            saved.getId(), member.getId(), request.optionId(), request.quantity(), order.calculateTotalPrice());
 
         // remove wish if exists
         wishService.removeByMemberAndProduct(member.getId(), option.getProduct().getId());
