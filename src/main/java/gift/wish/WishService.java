@@ -1,11 +1,14 @@
 package gift.wish;
 
 import gift.exception.EntityNotFoundException;
+import gift.exception.ForbiddenException;
 import gift.product.Product;
 import gift.product.ProductService;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
+
+import java.util.Optional;
 
 @Service
 public class WishService {
@@ -21,16 +24,22 @@ public class WishService {
         return wishRepository.findByMemberId(memberId, pageable);
     }
 
-    public Product findProductById(Long productId) {
-        return productService.findById(productId);
+    public Optional<Wish> findByMemberAndProduct(Long memberId, Long productId) {
+        productService.findById(productId);
+        return wishRepository.findByMemberIdAndProductId(memberId, productId);
     }
 
-    public Wish findByMemberIdAndProductId(Long memberId, Long productId) {
-        return wishRepository.findByMemberIdAndProductId(memberId, productId).orElse(null);
-    }
-
-    public Wish save(Long memberId, Product product) {
+    public Wish addWish(Long memberId, Long productId) {
+        Product product = productService.findById(productId);
         return wishRepository.save(new Wish(memberId, product));
+    }
+
+    public void deleteByIdAndMemberId(Long id, Long memberId) {
+        Wish wish = findById(id);
+        if (!wish.getMemberId().equals(memberId)) {
+            throw new ForbiddenException("다른 사용자의 위시를 삭제할 수 없습니다.");
+        }
+        wishRepository.delete(wish);
     }
 
     public Wish findById(Long id) {
@@ -41,9 +50,5 @@ public class WishService {
     public void removeByMemberAndProduct(Long memberId, Long productId) {
         wishRepository.findByMemberIdAndProductId(memberId, productId)
             .ifPresent(wishRepository::delete);
-    }
-
-    public void delete(Wish wish) {
-        wishRepository.delete(wish);
     }
 }
