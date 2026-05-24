@@ -140,6 +140,28 @@ public ResponseEntity<?> getOrders(@LoginMember Member member, Pageable pageable
 
 **검증**: 구조 변경, 외부 작동 동일
 
+### Step 9 — 누락된 서비스 로깅 보완 [OWASP A09]
+
+**목표**: Step 5, Step 8에서 로깅을 추가했지만, CategoryService, ProductService, OptionService, KakaoAuthService에는 로그가 없다. 어드민 상품/카테고리 변경, 카카오 로그인 등 운영에 필요한 이벤트를 추적할 수 있도록 보완한다.
+
+**변경 내용**:
+- `CategoryService`: 카테고리 추가/수정/삭제 시 `log.info`
+- `ProductService`: 상품 추가/수정/삭제 시 `log.info`
+- `OptionService`: 옵션 추가/삭제/재고 차감 시 `log.info`
+- `KakaoAuthService`: 카카오 로그인 성공 시 `log.info`
+
+**검증**: 구조 변경, 외부 작동 동일
+
+### Step 10 — AuthenticationResolver MemberRepository 직접 참조 제거 [구조 개선]
+
+**목표**: `AuthenticationResolver`가 `MemberRepository`를 직접 참조하고 있어 도메인 의존성 원칙에 어긋난다. `MemberService`를 통해 접근하도록 변경한다.
+
+**변경 내용**:
+- `AuthenticationResolver`: `MemberRepository` → `MemberService` 의존성 교체
+- `@Autowired` 어노테이션 제거 (다른 컴포넌트와 스타일 통일)
+
+**검증**: 구조 변경, 기존 테스트 전체 통과 확인
+
 ## 고려했으나 제외한 것
 
 | 항목 | 제외 사유 |

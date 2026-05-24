@@ -114,7 +114,9 @@
 - [x] 핵심 이벤트 로깅 — 회원가입/로그인/주문 생성, GlobalExceptionHandler 예외 로그 [OWASP A09]
 - [x] 서비스 메서드명 비즈니스 스타일로 변경 — JPA Repository 종속적인 `findById`, `findAll` 등을 `getProduct`, `getAllProducts` 등으로 통일
 - [x] MemberService 책임 분리 — 회원 CRUD / 인증(AuthService) / 카카오 OAuth(KakaoAuthService) 분리
-- [ ] WishService 로깅 추가 — 위시 추가/삭제, 소유권 검증 실패 로그
+- [x] WishService 로깅 추가 — 위시 추가/삭제, 소유권 검증 실패 로그
+- [ ] 누락된 서비스 로깅 보완 — CategoryService, ProductService, OptionService, KakaoAuthService
+- [ ] AuthenticationResolver MemberRepository 직접 참조 제거
 
 **선택 (낮음)**
 
