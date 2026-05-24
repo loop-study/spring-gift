@@ -1,6 +1,5 @@
 package gift.auth;
 
-import gift.member.MemberService;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -18,15 +17,15 @@ import org.springframework.web.bind.annotation.RestController;
 @RestController
 @RequestMapping(path = "/api/auth/kakao")
 public class KakaoAuthController {
-    private final MemberService memberService;
+    private final KakaoAuthService kakaoAuthService;
 
-    public KakaoAuthController(MemberService memberService) {
-        this.memberService = memberService;
+    public KakaoAuthController(KakaoAuthService kakaoAuthService) {
+        this.kakaoAuthService = kakaoAuthService;
     }
 
     @GetMapping(path = "/login")
     public ResponseEntity<Void> login() {
-        String kakaoAuthUrl = memberService.buildKakaoAuthUrl();
+        String kakaoAuthUrl = kakaoAuthService.buildKakaoAuthUrl();
         return ResponseEntity.status(HttpStatus.FOUND)
             .header(HttpHeaders.LOCATION, kakaoAuthUrl)
             .build();
@@ -34,7 +33,7 @@ public class KakaoAuthController {
 
     @GetMapping(path = "/callback")
     public ResponseEntity<TokenResponse> callback(@RequestParam("code") String code) {
-        String token = memberService.kakaoLogin(code);
+        String token = kakaoAuthService.kakaoLogin(code);
         return ResponseEntity.ok(new TokenResponse(token));
     }
 }

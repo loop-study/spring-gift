@@ -115,6 +115,20 @@ public ResponseEntity<?> getOrders(@LoginMember Member member, Pageable pageable
 
 **검증**: 구조 변경, 기존 테스트 전체 통과 확인
 
+### Step 7 — MemberService 책임 분리 [구조 개선]
+
+**목표**: `MemberService`가 회원 도메인, 인증, 카카오 OAuth 세 가지 책임을 갖고 있어 단일 책임 원칙을 위반한다. 컨트롤러는 이미 `MemberController`, `KakaoAuthController`, `AdminMemberController`로 분리되어 있으므로, 서비스도 역할에 맞게 분리한다.
+
+**현황**: `MemberService`가 `JwtProvider`, `BCryptPasswordEncoder`, `KakaoLoginClient`, `KakaoLoginProperties` 4개의 외부 의존성을 보유. 회원 CRUD와 무관한 인증/OAuth 로직이 혼재.
+
+**변경 내용**:
+- `AuthService` 추출: `register()`, `login()` + `JwtProvider`, `BCryptPasswordEncoder` 의존성 이전
+- `KakaoAuthService` 추출: `buildKakaoAuthUrl()`, `kakaoLogin()` + `KakaoLoginClient`, `KakaoLoginProperties` 의존성 이전
+- `MemberService`: 회원 CRUD(`getMember`, `getAllMembers`, `createMember`, `updateMember`, `removeMember`) + 포인트(`deductPoint`, `chargePoint`)만 유지
+- 각 컨트롤러가 자기 역할에 맞는 서비스만 참조하도록 변경
+
+**검증**: 구조 변경, 기존 테스트 전체 통과 확인
+
 ## 고려했으나 제외한 것
 
 | 항목 | 제외 사유 |
