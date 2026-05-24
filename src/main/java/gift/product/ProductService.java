@@ -33,13 +33,10 @@ public class ProductService {
             .orElseThrow(() -> new EntityNotFoundException("상품이 존재하지 않습니다. id=" + id));
     }
 
-    public Category getCategoryById(Long id) {
+    private Category getCategoryById(Long id) {
         return categoryService.getCategory(id);
     }
 
-    public List<Category> getAllCategories() {
-        return categoryService.getAllCategories();
-    }
 
     public Product addProduct(ProductRequest request) {
         validateName(request.name());

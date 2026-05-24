@@ -1,5 +1,6 @@
 package gift.product;
 
+import gift.category.CategoryService;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -14,9 +15,11 @@ import java.util.List;
 @RequestMapping("/admin/products")
 public class AdminProductController {
     private final ProductService productService;
+    private final CategoryService categoryService;
 
-    public AdminProductController(ProductService productService) {
+    public AdminProductController(ProductService productService, CategoryService categoryService) {
         this.productService = productService;
+        this.categoryService = categoryService;
     }
 
     @GetMapping
@@ -27,7 +30,7 @@ public class AdminProductController {
 
     @GetMapping("/new")
     public String newForm(Model model) {
-        model.addAttribute("categories", productService.getAllCategories());
+        model.addAttribute("categories", categoryService.getAllCategories());
         return "product/new";
     }
 
@@ -53,7 +56,7 @@ public class AdminProductController {
     public String editForm(@PathVariable Long id, Model model) {
         Product product = productService.getProduct(id);
         model.addAttribute("product", product);
-        model.addAttribute("categories", productService.getAllCategories());
+        model.addAttribute("categories", categoryService.getAllCategories());
         return "product/edit";
     }
 
@@ -97,7 +100,7 @@ public class AdminProductController {
         model.addAttribute("price", price);
         model.addAttribute("imageUrl", imageUrl);
         model.addAttribute("categoryId", categoryId);
-        model.addAttribute("categories", productService.getAllCategories());
+        model.addAttribute("categories", categoryService.getAllCategories());
     }
 
     private void populateEditForm(
@@ -115,6 +118,6 @@ public class AdminProductController {
         model.addAttribute("price", price);
         model.addAttribute("imageUrl", imageUrl);
         model.addAttribute("categoryId", categoryId);
-        model.addAttribute("categories", productService.getAllCategories());
+        model.addAttribute("categories", categoryService.getAllCategories());
     }
 }
