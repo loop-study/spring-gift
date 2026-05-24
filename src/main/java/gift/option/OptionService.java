@@ -5,12 +5,15 @@ import gift.exception.EntityNotFoundException;
 import gift.exception.ValidationException;
 import gift.product.Product;
 import gift.product.ProductService;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
 
 @Service
 public class OptionService {
+    private static final Logger log = LoggerFactory.getLogger(OptionService.class);
     private final OptionRepository optionRepository;
     private final ProductService productService;
 
@@ -33,13 +36,16 @@ public class OptionService {
             throw new DuplicateEntityException("이미 존재하는 옵션명입니다.");
         }
 
-        return optionRepository.save(new Option(product, request.name(), request.quantity()));
+        Option saved = optionRepository.save(new Option(product, request.name(), request.quantity()));
+        log.info("옵션 추가. optionId={}, productId={}, name={}", saved.getId(), productId, request.name());
+        return saved;
     }
 
     public Option subtractQuantity(Long optionId, int quantity) {
         Option option = optionRepository.findById(optionId)
             .orElseThrow(() -> new EntityNotFoundException("옵션이 존재하지 않습니다. id=" + optionId));
         option.subtractQuantity(quantity);
+        log.info("재고 차감. optionId={}, quantity={}, remaining={}", optionId, quantity, option.getQuantity());
         return optionRepository.save(option);
     }
 
@@ -59,6 +65,7 @@ public class OptionService {
         }
 
         optionRepository.delete(option);
+        log.info("옵션 삭제. optionId={}, productId={}", optionId, productId);
     }
 
     private void validateName(String name) {

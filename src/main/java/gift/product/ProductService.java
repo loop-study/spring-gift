@@ -4,6 +4,8 @@ import gift.category.Category;
 import gift.category.CategoryService;
 import gift.exception.EntityNotFoundException;
 import gift.exception.ValidationException;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
@@ -12,6 +14,7 @@ import java.util.List;
 
 @Service
 public class ProductService {
+    private static final Logger log = LoggerFactory.getLogger(ProductService.class);
     private final ProductRepository productRepository;
     private final CategoryService categoryService;
 
@@ -37,16 +40,19 @@ public class ProductService {
         return categoryService.getCategory(id);
     }
 
-
     public Product addProduct(ProductRequest request) {
         validateName(request.name());
         Category category = getCategoryById(request.categoryId());
-        return productRepository.save(request.toEntity(category));
+        Product saved = productRepository.save(request.toEntity(category));
+        log.info("상품 추가. id={}, name={}", saved.getId(), saved.getName());
+        return saved;
     }
 
     public Product addProduct(String name, int price, String imageUrl, Long categoryId) {
         Category category = getCategoryById(categoryId);
-        return productRepository.save(new Product(name, price, imageUrl, category));
+        Product saved = productRepository.save(new Product(name, price, imageUrl, category));
+        log.info("상품 추가. id={}, name={}", saved.getId(), saved.getName());
+        return saved;
     }
 
     public Product updateProduct(Long id, ProductRequest request) {
@@ -54,6 +60,7 @@ public class ProductService {
         Product product = getProduct(id);
         Category category = getCategoryById(request.categoryId());
         product.update(request.name(), request.price(), request.imageUrl(), category);
+        log.info("상품 수정. id={}, name={}", id, request.name());
         return productRepository.save(product);
     }
 
@@ -62,10 +69,12 @@ public class ProductService {
         Category category = getCategoryById(categoryId);
         product.update(name, price, imageUrl, category);
         productRepository.save(product);
+        log.info("상품 수정. id={}, name={}", id, name);
     }
 
     public void removeProduct(Long id) {
         productRepository.deleteById(id);
+        log.info("상품 삭제. id={}", id);
     }
 
     private void validateName(String name) {

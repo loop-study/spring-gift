@@ -2,11 +2,14 @@ package gift.auth;
 
 import gift.member.Member;
 import gift.member.MemberRepository;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 import org.springframework.web.util.UriComponentsBuilder;
 
 @Service
 public class KakaoAuthService {
+    private static final Logger log = LoggerFactory.getLogger(KakaoAuthService.class);
     private final MemberRepository memberRepository;
     private final JwtProvider jwtProvider;
     private final KakaoLoginClient kakaoLoginClient;
@@ -44,6 +47,7 @@ public class KakaoAuthService {
         member.updateKakaoAccessToken(kakaoToken.accessToken());
         memberRepository.save(member);
 
+        log.info("카카오 로그인 성공. email={}", member.getEmail());
         return jwtProvider.createToken(member.getEmail());
     }
 }
