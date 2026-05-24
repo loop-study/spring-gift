@@ -113,7 +113,8 @@
 - [x] 인증 코드 중복 제거 — `@RequestHeader + extractMember()` 5곳 반복 → `HandlerMethodArgumentResolver` 도입
 - [x] 핵심 이벤트 로깅 — 회원가입/로그인/주문 생성, GlobalExceptionHandler 예외 로그 [OWASP A09]
 - [x] 서비스 메서드명 비즈니스 스타일로 변경 — JPA Repository 종속적인 `findById`, `findAll` 등을 `getProduct`, `getAllProducts` 등으로 통일
-- [ ] MemberService 책임 분리 — 회원 CRUD / 인증(AuthService) / 카카오 OAuth(KakaoAuthService) 분리
+- [x] MemberService 책임 분리 — 회원 CRUD / 인증(AuthService) / 카카오 OAuth(KakaoAuthService) 분리
+- [ ] WishService 로깅 추가 — 위시 추가/삭제, 소유권 검증 실패 로그
 
 **선택 (낮음)**
 

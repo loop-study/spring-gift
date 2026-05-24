@@ -129,6 +129,17 @@ public ResponseEntity<?> getOrders(@LoginMember Member member, Pageable pageable
 
 **검증**: 구조 변경, 기존 테스트 전체 통과 확인
 
+### Step 8 — WishService 로깅 추가 [OWASP A09]
+
+**목표**: WishService에 핵심 이벤트 로그를 추가하여 운영 가시성을 확보한다. Step 5에서 MemberService, OrderService, GlobalExceptionHandler에 로깅을 추가했지만 WishService는 누락된 상태.
+
+**변경 내용**:
+- 위시 추가 성공 시 `log.info` (memberId, productId)
+- 위시 삭제 성공 시 `log.info` (wishId, memberId)
+- 소유권 검증 실패 시 `log.warn` (wishId, memberId)
+
+**검증**: 구조 변경, 외부 작동 동일
+
 ## 고려했으나 제외한 것
 
 | 항목 | 제외 사유 |

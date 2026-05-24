@@ -4,14 +4,15 @@ import gift.exception.EntityNotFoundException;
 import gift.exception.ForbiddenException;
 import gift.product.Product;
 import gift.product.ProductService;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
-
-
 @Service
 public class WishService {
+    private static final Logger log = LoggerFactory.getLogger(WishService.class);
     private final WishRepository wishRepository;
     private final ProductService productService;
 
@@ -28,16 +29,20 @@ public class WishService {
         return wishRepository.findByMemberIdAndProductId(memberId, productId)
             .orElseGet(() -> {
                 Product product = productService.getProduct(productId);
-                return wishRepository.save(new Wish(memberId, product));
+                Wish saved = wishRepository.save(new Wish(memberId, product));
+                log.info("위시 추가. memberId={}, productId={}", memberId, productId);
+                return saved;
             });
     }
 
     public void deleteByIdAndMemberId(Long id, Long memberId) {
         Wish wish = getWish(id);
         if (!wish.getMemberId().equals(memberId)) {
+            log.warn("위시 삭제 실패 — 소유권 불일치. wishId={}, memberId={}", id, memberId);
             throw new ForbiddenException("다른 사용자의 위시를 삭제할 수 없습니다.");
         }
         wishRepository.delete(wish);
+        log.info("위시 삭제. wishId={}, memberId={}", id, memberId);
     }
 
     public Wish getWish(Long id) {
