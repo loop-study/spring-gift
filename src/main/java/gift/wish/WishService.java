@@ -8,7 +8,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
-import java.util.Optional;
+
 
 @Service
 public class WishService {
@@ -24,14 +24,12 @@ public class WishService {
         return wishRepository.findByMemberId(memberId, pageable);
     }
 
-    public Optional<Wish> findByMemberAndProduct(Long memberId, Long productId) {
-        productService.getProduct(productId);
-        return wishRepository.findByMemberIdAndProductId(memberId, productId);
-    }
-
     public Wish addWish(Long memberId, Long productId) {
-        Product product = productService.getProduct(productId);
-        return wishRepository.save(new Wish(memberId, product));
+        return wishRepository.findByMemberIdAndProductId(memberId, productId)
+            .orElseGet(() -> {
+                Product product = productService.getProduct(productId);
+                return wishRepository.save(new Wish(memberId, product));
+            });
     }
 
     public void deleteByIdAndMemberId(Long id, Long memberId) {

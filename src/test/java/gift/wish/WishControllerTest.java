@@ -37,7 +37,7 @@ class WishControllerTest extends IntegrationTest {
             .content(objectMapper.writeValueAsString(request)));
 
         // then
-        result.andExpect(status().isCreated())
+        result.andExpect(status().isOk())
             .andExpect(jsonPath("$.productId").value(2));
     }
 
