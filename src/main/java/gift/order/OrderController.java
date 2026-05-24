@@ -27,7 +27,7 @@ public class OrderController {
         @LoginMember Member member,
         Pageable pageable
     ) {
-        var orders = orderService.findByMemberId(member.getId(), pageable).map(OrderResponse::from);
+        var orders = orderService.getMemberOrders(member.getId(), pageable).map(OrderResponse::from);
         return ResponseEntity.ok(orders);
     }
 

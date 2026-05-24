@@ -25,7 +25,7 @@ public class AdminMemberController {
 
     @GetMapping
     public String list(Model model) {
-        model.addAttribute("members", memberService.findAll());
+        model.addAttribute("members", memberService.getAllMembers());
         return "member/list";
     }
 
@@ -51,7 +51,7 @@ public class AdminMemberController {
 
     @GetMapping("/{id}/edit")
     public String editForm(@PathVariable Long id, Model model) {
-        Member member = memberService.findById(id);
+        Member member = memberService.getMember(id);
         model.addAttribute("member", member);
         return "member/edit";
     }
@@ -62,7 +62,7 @@ public class AdminMemberController {
         @RequestParam String email,
         @RequestParam String password
     ) {
-        memberService.update(id, email, password);
+        memberService.updateMember(id, email, password);
         return "redirect:/admin/members";
     }
 
@@ -77,7 +77,7 @@ public class AdminMemberController {
 
     @PostMapping("/{id}/delete")
     public String delete(@PathVariable Long id) {
-        memberService.delete(id);
+        memberService.removeMember(id);
         return "redirect:/admin/members";
     }
 

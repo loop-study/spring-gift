@@ -30,7 +30,7 @@ public class WishController {
         @LoginMember Member member,
         Pageable pageable
     ) {
-        var wishes = wishService.findByMemberId(member.getId(), pageable).map(WishResponse::from);
+        var wishes = wishService.getMemberWishes(member.getId(), pageable).map(WishResponse::from);
         return ResponseEntity.ok(wishes);
     }
 

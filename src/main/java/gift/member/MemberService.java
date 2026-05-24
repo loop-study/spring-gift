@@ -90,7 +90,7 @@ public class MemberService {
 
     // --- Admin (AdminMemberController) ---
 
-    public List<Member> findAll() {
+    public List<Member> getAllMembers() {
         return memberRepository.findAll();
     }
 
@@ -102,30 +102,30 @@ public class MemberService {
         return memberRepository.save(new Member(email, passwordEncoder.encode(password)));
     }
 
-    public Member findById(Long id) {
+    public Member getMember(Long id) {
         return memberRepository.findById(id)
             .orElseThrow(() -> new EntityNotFoundException("Member not found. id=" + id));
     }
 
-    public void update(Long id, String email, String password) {
-        Member member = findById(id);
+    public void updateMember(Long id, String email, String password) {
+        Member member = getMember(id);
         member.update(email, passwordEncoder.encode(password));
         memberRepository.save(member);
     }
 
     public void deductPoint(Long id, int amount) {
-        Member member = findById(id);
+        Member member = getMember(id);
         member.deductPoint(amount);
         memberRepository.save(member);
     }
 
     public void chargePoint(Long id, int amount) {
-        Member member = findById(id);
+        Member member = getMember(id);
         member.chargePoint(amount);
         memberRepository.save(member);
     }
 
-    public void delete(Long id) {
+    public void removeMember(Long id) {
         memberRepository.deleteById(id);
     }
 }

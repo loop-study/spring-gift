@@ -36,7 +36,7 @@ public class OrderService {
         this.eventPublisher = eventPublisher;
     }
 
-    public Page<Order> findByMemberId(Long memberId, Pageable pageable) {
+    public Page<Order> getMemberOrders(Long memberId, Pageable pageable) {
         return orderRepository.findByMemberId(memberId, pageable);
     }
 

@@ -28,7 +28,7 @@ public class OptionController {
 
     @GetMapping
     public ResponseEntity<List<OptionResponse>> getOptions(@PathVariable Long productId) {
-        List<Option> options = optionService.findByProductId(productId);
+        List<Option> options = optionService.getProductOptions(productId);
         List<OptionResponse> responses = options.stream()
             .map(OptionResponse::from)
             .toList();
@@ -40,7 +40,7 @@ public class OptionController {
         @PathVariable Long productId,
         @Valid @RequestBody OptionRequest request
     ) {
-        Option saved = optionService.create(productId, request);
+        Option saved = optionService.addOption(productId, request);
         URI location = URI.create("/api/products/" + productId + "/options/" + saved.getId());
         return ResponseEntity.created(location)
             .body(OptionResponse.from(saved));
@@ -51,7 +51,7 @@ public class OptionController {
         @PathVariable Long productId,
         @PathVariable Long optionId
     ) {
-        optionService.delete(productId, optionId);
+        optionService.removeOption(productId, optionId);
         return ResponseEntity.noContent().build();
     }
 

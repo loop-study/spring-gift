@@ -100,6 +100,21 @@ public ResponseEntity<?> getOrders(@LoginMember Member member, Pageable pageable
 
 **검증**: 구조 변경, 외부 작동 동일
 
+### Step 6 — 서비스 메서드명 비즈니스 스타일로 변경 [구조 개선]
+
+**목표**: 서비스 계층의 메서드명이 JPA Repository 메서드명(`findById`, `findAll`, `save`, `delete`)을 그대로 따르고 있어, 서비스가 Repository의 단순 위임처럼 보이는 문제를 해소한다.
+
+**변경 내용**:
+- `CategoryService`: findById→getCategory, findAll→getAllCategories, create→addCategory, update→updateCategory, delete→removeCategory
+- `ProductService`: findById→getProduct, findAll→getAllProducts, findCategoryById→getCategoryById, findAllCategories→getAllCategories, create→addProduct, update→updateProduct, delete→removeProduct
+- `OptionService`: findByProductId→getProductOptions, create→addOption, delete→removeOption
+- `MemberService`: findById→getMember, findAll→getAllMembers, update→updateMember, delete→removeMember
+- `WishService`: findById→getWish, findByMemberId→getMemberWishes
+- `OrderService`: findByMemberId→getMemberOrders
+- 각 서비스의 호출부(Controller, 다른 Service) 일괄 수정
+
+**검증**: 구조 변경, 기존 테스트 전체 통과 확인
+
 ## 고려했으나 제외한 것
 
 | 항목 | 제외 사유 |

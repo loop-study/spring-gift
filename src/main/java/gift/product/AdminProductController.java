@@ -21,13 +21,13 @@ public class AdminProductController {
 
     @GetMapping
     public String list(Model model) {
-        model.addAttribute("products", productService.findAll());
+        model.addAttribute("products", productService.getAllProducts());
         return "product/list";
     }
 
     @GetMapping("/new")
     public String newForm(Model model) {
-        model.addAttribute("categories", productService.findAllCategories());
+        model.addAttribute("categories", productService.getAllCategories());
         return "product/new";
     }
 
@@ -45,15 +45,15 @@ public class AdminProductController {
             return "product/new";
         }
 
-        productService.create(name, price, imageUrl, categoryId);
+        productService.addProduct(name, price, imageUrl, categoryId);
         return "redirect:/admin/products";
     }
 
     @GetMapping("/{id}/edit")
     public String editForm(@PathVariable Long id, Model model) {
-        Product product = productService.findById(id);
+        Product product = productService.getProduct(id);
         model.addAttribute("product", product);
-        model.addAttribute("categories", productService.findAllCategories());
+        model.addAttribute("categories", productService.getAllCategories());
         return "product/edit";
     }
 
@@ -66,7 +66,7 @@ public class AdminProductController {
         @RequestParam Long categoryId,
         Model model
     ) {
-        Product product = productService.findById(id);
+        Product product = productService.getProduct(id);
 
         List<String> errors = ProductNameValidator.validate(name, true);
         if (!errors.isEmpty()) {
@@ -74,13 +74,13 @@ public class AdminProductController {
             return "product/edit";
         }
 
-        productService.update(id, name, price, imageUrl, categoryId);
+        productService.updateProduct(id, name, price, imageUrl, categoryId);
         return "redirect:/admin/products";
     }
 
     @PostMapping("/{id}/delete")
     public String delete(@PathVariable Long id) {
-        productService.delete(id);
+        productService.removeProduct(id);
         return "redirect:/admin/products";
     }
 
@@ -97,7 +97,7 @@ public class AdminProductController {
         model.addAttribute("price", price);
         model.addAttribute("imageUrl", imageUrl);
         model.addAttribute("categoryId", categoryId);
-        model.addAttribute("categories", productService.findAllCategories());
+        model.addAttribute("categories", productService.getAllCategories());
     }
 
     private void populateEditForm(
@@ -115,6 +115,6 @@ public class AdminProductController {
         model.addAttribute("price", price);
         model.addAttribute("imageUrl", imageUrl);
         model.addAttribute("categoryId", categoryId);
-        model.addAttribute("categories", productService.findAllCategories());
+        model.addAttribute("categories", productService.getAllCategories());
     }
 }

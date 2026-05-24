@@ -20,54 +20,54 @@ public class ProductService {
         this.categoryService = categoryService;
     }
 
-    public Page<Product> findAll(Pageable pageable) {
+    public Page<Product> getAllProducts(Pageable pageable) {
         return productRepository.findAll(pageable);
     }
 
-    public List<Product> findAll() {
+    public List<Product> getAllProducts() {
         return productRepository.findAll();
     }
 
-    public Product findById(Long id) {
+    public Product getProduct(Long id) {
         return productRepository.findById(id)
             .orElseThrow(() -> new EntityNotFoundException("상품이 존재하지 않습니다. id=" + id));
     }
 
-    public Category findCategoryById(Long id) {
-        return categoryService.findById(id);
+    public Category getCategoryById(Long id) {
+        return categoryService.getCategory(id);
     }
 
-    public List<Category> findAllCategories() {
-        return categoryService.findAll();
+    public List<Category> getAllCategories() {
+        return categoryService.getAllCategories();
     }
 
-    public Product create(ProductRequest request) {
+    public Product addProduct(ProductRequest request) {
         validateName(request.name());
-        Category category = findCategoryById(request.categoryId());
+        Category category = getCategoryById(request.categoryId());
         return productRepository.save(request.toEntity(category));
     }
 
-    public Product create(String name, int price, String imageUrl, Long categoryId) {
-        Category category = findCategoryById(categoryId);
+    public Product addProduct(String name, int price, String imageUrl, Long categoryId) {
+        Category category = getCategoryById(categoryId);
         return productRepository.save(new Product(name, price, imageUrl, category));
     }
 
-    public Product update(Long id, ProductRequest request) {
+    public Product updateProduct(Long id, ProductRequest request) {
         validateName(request.name());
-        Product product = findById(id);
-        Category category = findCategoryById(request.categoryId());
+        Product product = getProduct(id);
+        Category category = getCategoryById(request.categoryId());
         product.update(request.name(), request.price(), request.imageUrl(), category);
         return productRepository.save(product);
     }
 
-    public void update(Long id, String name, int price, String imageUrl, Long categoryId) {
-        Product product = findById(id);
-        Category category = findCategoryById(categoryId);
+    public void updateProduct(Long id, String name, int price, String imageUrl, Long categoryId) {
+        Product product = getProduct(id);
+        Category category = getCategoryById(categoryId);
         product.update(name, price, imageUrl, category);
         productRepository.save(product);
     }
 
-    public void delete(Long id) {
+    public void removeProduct(Long id) {
         productRepository.deleteById(id);
     }
 

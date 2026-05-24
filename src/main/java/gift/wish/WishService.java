@@ -20,29 +20,29 @@ public class WishService {
         this.productService = productService;
     }
 
-    public Page<Wish> findByMemberId(Long memberId, Pageable pageable) {
+    public Page<Wish> getMemberWishes(Long memberId, Pageable pageable) {
         return wishRepository.findByMemberId(memberId, pageable);
     }
 
     public Optional<Wish> findByMemberAndProduct(Long memberId, Long productId) {
-        productService.findById(productId);
+        productService.getProduct(productId);
         return wishRepository.findByMemberIdAndProductId(memberId, productId);
     }
 
     public Wish addWish(Long memberId, Long productId) {
-        Product product = productService.findById(productId);
+        Product product = productService.getProduct(productId);
         return wishRepository.save(new Wish(memberId, product));
     }
 
     public void deleteByIdAndMemberId(Long id, Long memberId) {
-        Wish wish = findById(id);
+        Wish wish = getWish(id);
         if (!wish.getMemberId().equals(memberId)) {
             throw new ForbiddenException("다른 사용자의 위시를 삭제할 수 없습니다.");
         }
         wishRepository.delete(wish);
     }
 
-    public Wish findById(Long id) {
+    public Wish getWish(Long id) {
         return wishRepository.findById(id)
             .orElseThrow(() -> new EntityNotFoundException("위시가 존재하지 않습니다. id=" + id));
     }

@@ -112,6 +112,7 @@
 - [x] 도메인 간 의존성 정리 — `OrderService`가 다른 도메인의 Repository를 직접 참조 → 각 도메인 Service를 통하도록 개선
 - [x] 인증 코드 중복 제거 — `@RequestHeader + extractMember()` 5곳 반복 → `HandlerMethodArgumentResolver` 도입
 - [x] 핵심 이벤트 로깅 — 회원가입/로그인/주문 생성, GlobalExceptionHandler 예외 로그 [OWASP A09]
+- [x] 서비스 메서드명 비즈니스 스타일로 변경 — JPA Repository 종속적인 `findById`, `findAll` 등을 `getProduct`, `getAllProducts` 등으로 통일
 
 **선택 (낮음)**
 

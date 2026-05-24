@@ -19,15 +19,15 @@ public class OptionService {
         this.productService = productService;
     }
 
-    public List<Option> findByProductId(Long productId) {
-        productService.findById(productId);
+    public List<Option> getProductOptions(Long productId) {
+        productService.getProduct(productId);
         return optionRepository.findByProductId(productId);
     }
 
-    public Option create(Long productId, OptionRequest request) {
+    public Option addOption(Long productId, OptionRequest request) {
         validateName(request.name());
 
-        Product product = productService.findById(productId);
+        Product product = productService.getProduct(productId);
 
         if (optionRepository.existsByProductIdAndName(productId, request.name())) {
             throw new DuplicateEntityException("이미 존재하는 옵션명입니다.");
@@ -43,8 +43,8 @@ public class OptionService {
         return optionRepository.save(option);
     }
 
-    public void delete(Long productId, Long optionId) {
-        productService.findById(productId);
+    public void removeOption(Long productId, Long optionId) {
+        productService.getProduct(productId);
 
         List<Option> options = optionRepository.findByProductId(productId);
         if (options.size() <= 1) {

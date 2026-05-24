@@ -13,27 +13,27 @@ public class CategoryService {
         this.categoryRepository = categoryRepository;
     }
 
-    public Category findById(Long id) {
+    public Category getCategory(Long id) {
         return categoryRepository.findById(id)
             .orElseThrow(() -> new EntityNotFoundException("카테고리가 존재하지 않습니다. id=" + id));
     }
 
-    public List<Category> findAll() {
+    public List<Category> getAllCategories() {
         return categoryRepository.findAll();
     }
 
-    public Category create(CategoryRequest request) {
+    public Category addCategory(CategoryRequest request) {
         return categoryRepository.save(request.toEntity());
     }
 
-    public Category update(Long id, CategoryRequest request) {
+    public Category updateCategory(Long id, CategoryRequest request) {
         Category category = categoryRepository.findById(id)
             .orElseThrow(() -> new EntityNotFoundException("카테고리가 존재하지 않습니다. id=" + id));
         category.update(request.name(), request.color(), request.imageUrl(), request.description());
         return categoryRepository.save(category);
     }
 
-    public void delete(Long id) {
+    public void removeCategory(Long id) {
         categoryRepository.deleteById(id);
     }
 }
