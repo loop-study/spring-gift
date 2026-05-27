@@ -22,7 +22,7 @@ public class MemberService {
 
     public Member register(MemberRequest request) {
         if (memberRepository.existsByEmail(request.email())) {
-            throw new DuplicateEntityException("Email is already registered.");
+            throw new DuplicateEntityException("이미 등록된 이메일입니다.");
         }
         String encoded = passwordEncoder.encode(request.password());
         Member member = memberRepository.save(new Member(request.email(), encoded));
@@ -44,12 +44,12 @@ public class MemberService {
 
     public Member getMemberByEmail(String email) {
         return memberRepository.findByEmail(email)
-            .orElseThrow(() -> new EntityNotFoundException("Member not found. email=" + email));
+            .orElseThrow(() -> new EntityNotFoundException("회원이 존재하지 않습니다. email=" + email));
     }
 
     public Member getMember(Long id) {
         return memberRepository.findById(id)
-            .orElseThrow(() -> new EntityNotFoundException("Member not found. id=" + id));
+            .orElseThrow(() -> new EntityNotFoundException("회원이 존재하지 않습니다. id=" + id));
     }
 
     public void updateMember(Long id, String email, String password) {

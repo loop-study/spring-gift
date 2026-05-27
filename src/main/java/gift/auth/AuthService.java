@@ -30,12 +30,12 @@ public class AuthService {
         Member member = memberRepository.findByEmail(request.email())
             .orElseThrow(() -> {
                 log.warn("로그인 실패 — 존재하지 않는 이메일. email={}", request.email());
-                return new AuthenticationException("Invalid email or password.");
+                return new AuthenticationException("이메일 또는 비밀번호가 올바르지 않습니다.");
             });
 
         if (member.getPassword() == null || !passwordEncoder.matches(request.password(), member.getPassword())) {
             log.warn("로그인 실패 — 비밀번호 불일치. email={}", request.email());
-            throw new AuthenticationException("Invalid email or password.");
+            throw new AuthenticationException("이메일 또는 비밀번호가 올바르지 않습니다.");
         }
 
         log.info("로그인 성공. email={}", member.getEmail());

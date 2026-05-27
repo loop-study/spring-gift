@@ -50,7 +50,7 @@ public class Member {
 
     public void chargePoint(int amount) {
         if (amount <= 0) {
-            throw new ValidationException("Amount must be greater than zero.");
+            throw new ValidationException("충전 금액은 1 이상이어야 합니다.");
         }
         this.point += amount;
     }
