@@ -122,7 +122,7 @@
 
 - [ ] 삭제 메서드 존재 확인 추가 — `removeCategory`, `removeProduct`, `removeMember`가 존재하지 않는 ID 삭제 시 500 반환
 - [ ] 예외 메시지 언어 통일 — 한국어/영어 혼재 → 한국어 통일
-- [ ] `Order.calculateTotalPrice()` 오버플로 방지 — `int` → `long`
+- [ ] ~~`Order.calculateTotalPrice()` 오버플로 방지~~ — 생략. 단일 주문 640개 이상이어야 발생하는 비현실적 시나리오. 필요 시 주문 수량 상한이 더 적절.
 - [ ] `WishService.addWish()` 동시성 보호 — unique constraint 위반 시 500 방지
 
 **선택 (낮음)**

@@ -180,21 +180,9 @@ public ResponseEntity<?> getOrders(@LoginMember Member member, Pageable pageable
 
 **검증**: 구조 변경, 외부 작동 동일 (메시지 텍스트만 변경)
 
-### Step 13 — Order.calculateTotalPrice() 오버플로 방지 [코드 리뷰]
+### ~~Step 13 — Order.calculateTotalPrice() 오버플로 방지~~ (생략)
 
-**목표**: `int` 곱셈으로 가격 × 수량이 21억을 초과하면 오버플로가 발생한다. `long`으로 변경하여 안전하게 한다.
-
-**변경 내용**:
-- `Order.calculateTotalPrice()`: 반환 타입 `int` → `long`, 곱셈을 `(long) price * quantity`로 캐스팅
-- `Member.deductPoint()`: 파라미터 `int` → `long`, 비교/차감 로직 `long` 대응
-- `Member.chargePoint()`: 파라미터 `int` → `long`
-- `Member.point` 필드: `int` → `long`
-- `Member.getPoint()`: 반환 타입 `long`
-- `MemberService.deductPoint()`, `chargePoint()`: 파라미터 `int` → `long`
-- `OrderService.createOrder()`: `calculateTotalPrice()` 반환값 `long` 대응
-- `OrderTest`: 검증값 `long` 대응
-
-**검증**: 기존 테스트 전체 통과 확인
+**생략 사유**: `int` 범위(약 21억)에서 오버플로가 발생하려면 단일 주문에서 가격 3,360,000 × 수량 640 이상이어야 한다. 현실적으로 발생할 수 없는 시나리오이며, 필요하다면 `long` 전환보다 주문 수량 상한을 두는 것이 더 자연스럽다.
 
 ### Step 14 — WishService.addWish() 동시성 보호 [코드 리뷰]
 
