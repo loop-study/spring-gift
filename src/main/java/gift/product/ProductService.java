@@ -73,6 +73,7 @@ public class ProductService {
     }
 
     public void removeProduct(Long id) {
+        getProduct(id);
         productRepository.deleteById(id);
         log.info("상품 삭제. id={}", id);
     }

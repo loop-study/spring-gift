@@ -40,6 +40,7 @@ public class CategoryService {
     }
 
     public void removeCategory(Long id) {
+        getCategory(id);
         categoryRepository.deleteById(id);
         log.info("카테고리 삭제. id={}", id);
     }

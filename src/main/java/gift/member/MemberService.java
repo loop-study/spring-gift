@@ -71,6 +71,7 @@ public class MemberService {
     }
 
     public void removeMember(Long id) {
+        getMember(id);
         memberRepository.deleteById(id);
     }
 }
