@@ -184,15 +184,15 @@ public ResponseEntity<?> getOrders(@LoginMember Member member, Pageable pageable
 
 **생략 사유**: `int` 범위(약 21억)에서 오버플로가 발생하려면 단일 주문에서 가격 3,360,000 × 수량 640 이상이어야 한다. 현실적으로 발생할 수 없는 시나리오이며, 필요하다면 `long` 전환보다 주문 수량 상한을 두는 것이 더 자연스럽다.
 
-### Step 14 — WishService.addWish() 동시성 보호 [코드 리뷰]
+### Step 14 — Wish 테이블 unique constraint 추가 [코드 리뷰]
 
-**목표**: 동일 회원이 같은 상품을 동시에 위시 추가하면 unique constraint 위반으로 500이 반환될 수 있다. `@Transactional`을 추가하고, `DataIntegrityViolationException` 발생 시 기존 위시를 조회하여 반환한다.
+**목표**: wish 테이블에 `(member_id, product_id)` unique constraint가 없어, 애플리케이션 레벨의 중복 체크만으로 데이터 정합성을 보장하고 있다. DB 레벨에서 중복을 방지하여 데이터 무결성을 강화한다.
 
 **변경 내용**:
-- `WishService.addWish()`: `@Transactional` 추가
-- `DataIntegrityViolationException` catch → 기존 위시 재조회 후 반환
+- Flyway 마이그레이션 `V3__Add_wish_unique_constraint.sql` 추가
+- `Wish` 엔티티에 `@Table(uniqueConstraints)` 명시
 
-**검증**: 구조 변경, 기존 테스트 전체 통과 확인
+**검증**: 기존 테스트 전체 통과 확인
 
 ### 코드 리뷰에서 유지로 결정한 항목
 
