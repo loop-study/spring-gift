@@ -153,6 +153,66 @@ public ResponseEntity<?> getOrders(@LoginMember Member member, Pageable pageable
 
 **검증**: 구조 변경, 기존 테스트 전체 통과 확인
 
+### Step 11 — 삭제 메서드 존재 확인 추가 [코드 리뷰]
+
+**목표**: `removeCategory`, `removeProduct`, `removeMember`가 `deleteById`를 직접 호출하여, 존재하지 않는 ID 삭제 시 `EmptyResultDataAccessException`이 `GlobalExceptionHandler`에서 처리되지 않아 500이 반환되는 문제를 해소한다.
+
+**변경 내용**:
+- `CategoryService.removeCategory()`: 삭제 전 `getCategory(id)` 호출로 존재 확인
+- `ProductService.removeProduct()`: 삭제 전 `getProduct(id)` 호출로 존재 확인
+- `MemberService.removeMember()`: 삭제 전 `getMember(id)` 호출로 존재 확인
+
+**검증**: 구조 변경, 존재하지 않는 ID 삭제 시 404 응답 확인
+
+### Step 12 — 예외 메시지 언어 통일 [코드 리뷰]
+
+**목표**: 예외 메시지가 한국어와 영어로 혼재되어 있어, 운영 환경에서 `grep`이나 모니터링 시 혼동된다. 한국어로 통일한다.
+
+**현황**:
+- 영어: `"Invalid email or password."`, `"Email is already registered."`, `"Member not found."`, `"Amount must be greater than zero."`
+- 한국어: `"카테고리가 존재하지 않습니다."`, `"포인트가 부족합니다."`, `"이미 존재하는 옵션명입니다."` 등
+
+**변경 내용**:
+- `AuthService`: `"Invalid email or password."` → `"이메일 또는 비밀번호가 올바르지 않습니다."`
+- `MemberService`: `"Email is already registered."` → `"이미 등록된 이메일입니다."`, `"Member not found."` → `"회원이 존재하지 않습니다."`
+- `Member.chargePoint()`: `"Amount must be greater than zero."` → `"충전 금액은 1 이상이어야 합니다."`
+- `AdminMemberController`: 에러 메시지 동일하게 한국어 적용
+
+**검증**: 구조 변경, 외부 작동 동일 (메시지 텍스트만 변경)
+
+### Step 13 — Order.calculateTotalPrice() 오버플로 방지 [코드 리뷰]
+
+**목표**: `int` 곱셈으로 가격 × 수량이 21억을 초과하면 오버플로가 발생한다. `long`으로 변경하여 안전하게 한다.
+
+**변경 내용**:
+- `Order.calculateTotalPrice()`: 반환 타입 `int` → `long`, 곱셈을 `(long) price * quantity`로 캐스팅
+- `Member.deductPoint()`: 파라미터 `int` → `long`, 비교/차감 로직 `long` 대응
+- `Member.chargePoint()`: 파라미터 `int` → `long`
+- `Member.point` 필드: `int` → `long`
+- `Member.getPoint()`: 반환 타입 `long`
+- `MemberService.deductPoint()`, `chargePoint()`: 파라미터 `int` → `long`
+- `OrderService.createOrder()`: `calculateTotalPrice()` 반환값 `long` 대응
+- `OrderTest`: 검증값 `long` 대응
+
+**검증**: 기존 테스트 전체 통과 확인
+
+### Step 14 — WishService.addWish() 동시성 보호 [코드 리뷰]
+
+**목표**: 동일 회원이 같은 상품을 동시에 위시 추가하면 unique constraint 위반으로 500이 반환될 수 있다. `@Transactional`을 추가하고, `DataIntegrityViolationException` 발생 시 기존 위시를 조회하여 반환한다.
+
+**변경 내용**:
+- `WishService.addWish()`: `@Transactional` 추가
+- `DataIntegrityViolationException` catch → 기존 위시 재조회 후 반환
+
+**검증**: 구조 변경, 기존 테스트 전체 통과 확인
+
+### 코드 리뷰에서 유지로 결정한 항목
+
+| 항목 | 유지 사유 |
+|---|---|
+| **AuthService/KakaoAuthService → MemberRepository 직접 참조** | 이전 세션에서 "같은 auth→member 방향이므로 괜찮다"로 결정. 순환 의존 아님. |
+| **OptionService.getProductOptions() 상품 존재 확인** | 존재하지 않는 상품 ID에 대해 빈 리스트(200) 대신 404를 반환하는 것이 REST 의미론에 부합. 의도적 설계. |
+
 ## 고려했으나 제외한 것
 
 | 항목 | 제외 사유 |

@@ -118,6 +118,13 @@
 - [x] 누락된 서비스 로깅 보완 — CategoryService, ProductService, OptionService, KakaoAuthService
 - [x] AuthenticationResolver MemberRepository 직접 참조 제거
 
+**코드 리뷰 개선 (중간)**
+
+- [ ] 삭제 메서드 존재 확인 추가 — `removeCategory`, `removeProduct`, `removeMember`가 존재하지 않는 ID 삭제 시 500 반환
+- [ ] 예외 메시지 언어 통일 — 한국어/영어 혼재 → 한국어 통일
+- [ ] `Order.calculateTotalPrice()` 오버플로 방지 — `int` → `long`
+- [ ] `WishService.addWish()` 동시성 보호 — unique constraint 위반 시 500 방지
+
 **선택 (낮음)**
 
 - [ ] ~~CORS 설정~~ — 생략. 현재 같은 도메인에서만 사용하므로 불필요. 프론트엔드 분리 시 도입.
