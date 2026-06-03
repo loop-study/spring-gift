@@ -61,6 +61,17 @@ PR #8에 대한 리뷰 코멘트 9개 중 코드 수정이 필요한 5개 항목
 
 **생략 사유**: 프로젝트 규모에서 AOP 도입은 과도하다. info/warn/error 구분이 비즈니스 맥락에 따라 다르고, 반환값 정보(id, name)가 유실된다. 리뷰어의 주요 지적은 불필요한 INFO 로그였으며, Step 4에서 해소 완료.
 
+## 추가 개선사항 (코드 리뷰 발견)
+
+| # | 심각도 | 파일 | 내용 |
+|---|---|---|---|
+| 1 | 🔴 버그 | `LoginMemberArgumentResolver:32` | Authorization 헤더 null 시 NPE — null 체크 추가 필요 |
+| 2 | 🟡 일관성 | `OptionController:31` | DTO 변환 Service 통일에서 누락 — `getProductOptions`가 엔티티 반환 |
+| 3 | 🟡 일관성 | `AdminProductController:33` | SSR에 `CategoryResponse` 혼재 — SSR용 DTO 필요 여부 검토 |
+| 4 | 🟢 죽은 코드 | `ProductService:43` | `getAllProducts()` (no pageable) 호출자 없음 — 제거 |
+| 5 | 🟢 중복 | `OrderService:55` | `calculateTotalPrice()` 두 번 호출 — 로컬 변수로 통합 |
+| 6 | 🟢 죽은 코드 | `ProductService:53` | `existsByCategoryId()` 호출자 없음 — 제거 |
+
 ### Step 6 — 테스트 코드 var → 명시적 타입 변경 [리뷰 #8]
 
 **목표**: 테스트 코드에서 `var` 사용을 명시적 타입으로 변경하여 프로젝트 코드 스타일과 통일한다.
