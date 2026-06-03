@@ -9,6 +9,8 @@ import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.transaction.annotation.Transactional;
 
+import org.springframework.test.web.servlet.MvcResult;
+
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
@@ -25,8 +27,8 @@ public abstract class IntegrationTest {
     protected ObjectMapper objectMapper;
 
     protected String loginAndGetToken(String email, String password) throws Exception {
-        var loginRequest = "{\"email\":\"" + email + "\",\"password\":\"" + password + "\"}";
-        var result = mockMvc.perform(post("/api/members/login")
+        String loginRequest = "{\"email\":\"" + email + "\",\"password\":\"" + password + "\"}";
+        MvcResult result = mockMvc.perform(post("/api/members/login")
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(loginRequest))
             .andExpect(status().isOk())
