@@ -1,15 +1,12 @@
 package gift.order;
 
 import gift.product.Product;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Component;
 import org.springframework.util.LinkedMultiValueMap;
 import org.springframework.web.client.RestClient;
 
 @Component
 public class KakaoMessageClient {
-    private static final Logger log = LoggerFactory.getLogger(KakaoMessageClient.class);
     private final RestClient restClient;
 
     public KakaoMessageClient(RestClient.Builder builder) {
@@ -17,7 +14,6 @@ public class KakaoMessageClient {
     }
 
     public void sendToMe(String accessToken, Order order, Product product) {
-        log.info("카카오 메시지 발송 요청. orderId={}, product={}", order.getId(), product.getName());
         var templateObject = buildTemplate(order, product);
 
         var params = new LinkedMultiValueMap<String, String>();
@@ -30,7 +26,6 @@ public class KakaoMessageClient {
             .body(params)
             .retrieve()
             .toBodilessEntity();
-        log.info("카카오 API 응답 수신 완료. orderId={}", order.getId());
     }
 
     private String buildTemplate(Order order, Product product) {

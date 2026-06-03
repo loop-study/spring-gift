@@ -31,15 +31,12 @@ public class KakaoLoginClient {
         params.add("client_secret", properties.clientSecret());
 
         try {
-            log.info("카카오 토큰 교환 요청");
-            KakaoTokenResponse response = restClient.post()
+            return restClient.post()
                 .uri("https://kauth.kakao.com/oauth/token")
                 .header("Content-Type", "application/x-www-form-urlencoded")
                 .body(params)
                 .retrieve()
                 .body(KakaoTokenResponse.class);
-            log.info("카카오 토큰 교환 성공");
-            return response;
         } catch (RestClientResponseException e) {
             log.warn("카카오 토큰 교환 실패. status={}, body={}", e.getStatusCode(), e.getResponseBodyAsString());
             throw new AuthenticationException("카카오 로그인에 실패했습니다.");
@@ -51,14 +48,11 @@ public class KakaoLoginClient {
 
     public KakaoUserResponse requestUserInfo(String accessToken) {
         try {
-            log.info("카카오 사용자 정보 조회 요청");
-            KakaoUserResponse response = restClient.get()
+            return restClient.get()
                 .uri("https://kapi.kakao.com/v2/user/me")
                 .header("Authorization", "Bearer " + accessToken)
                 .retrieve()
                 .body(KakaoUserResponse.class);
-            log.info("카카오 사용자 정보 조회 성공. email={}", response.email());
-            return response;
         } catch (RestClientResponseException e) {
             log.warn("카카오 사용자 정보 조회 실패. status={}, body={}", e.getStatusCode(), e.getResponseBodyAsString());
             throw new AuthenticationException("카카오 로그인에 실패했습니다.");
