@@ -1,5 +1,6 @@
 package gift.auth;
 
+import gift.exception.AuthenticationException;
 import gift.member.Member;
 import org.springframework.core.MethodParameter;
 import org.springframework.stereotype.Component;
@@ -30,6 +31,9 @@ public class LoginMemberArgumentResolver implements HandlerMethodArgumentResolve
         WebDataBinderFactory binderFactory
     ) {
         String authorization = webRequest.getHeader("Authorization");
+        if (authorization == null) {
+            throw new AuthenticationException("인증 헤더가 없습니다.");
+        }
         return authenticationResolver.extractMember(authorization);
     }
 }
