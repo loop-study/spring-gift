@@ -4,10 +4,12 @@ import gift.exception.EntityNotFoundException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 
 @Service
+@Transactional(readOnly = true)
 public class CategoryService {
     private static final Logger log = LoggerFactory.getLogger(CategoryService.class);
     private final CategoryRepository categoryRepository;
@@ -25,20 +27,23 @@ public class CategoryService {
         return categoryRepository.findAll();
     }
 
+    @Transactional
     public Category addCategory(CategoryRequest request) {
         Category saved = categoryRepository.save(request.toEntity());
         log.info("카테고리 추가. id={}, name={}", saved.getId(), saved.getName());
         return saved;
     }
 
+    @Transactional
     public Category updateCategory(Long id, CategoryRequest request) {
         Category category = categoryRepository.findById(id)
             .orElseThrow(() -> new EntityNotFoundException("카테고리가 존재하지 않습니다. id=" + id));
         category.update(request.name(), request.color(), request.imageUrl(), request.description());
         log.info("카테고리 수정. id={}, name={}", id, request.name());
-        return categoryRepository.save(category);
+        return category;
     }
 
+    @Transactional
     public void removeCategory(Long id) {
         getCategory(id);
         categoryRepository.deleteById(id);

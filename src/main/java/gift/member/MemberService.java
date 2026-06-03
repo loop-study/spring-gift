@@ -6,10 +6,12 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 
 @Service
+@Transactional(readOnly = true)
 public class MemberService {
     private static final Logger log = LoggerFactory.getLogger(MemberService.class);
     private final MemberRepository memberRepository;
@@ -20,6 +22,7 @@ public class MemberService {
         this.passwordEncoder = passwordEncoder;
     }
 
+    @Transactional
     public Member register(MemberRequest request) {
         if (memberRepository.existsByEmail(request.email())) {
             throw new DuplicateEntityException("이미 등록된 이메일입니다.");
@@ -38,6 +41,7 @@ public class MemberService {
         return memberRepository.existsByEmail(email);
     }
 
+    @Transactional
     public Member createMember(String email, String password) {
         return memberRepository.save(new Member(email, passwordEncoder.encode(password)));
     }
@@ -52,24 +56,25 @@ public class MemberService {
             .orElseThrow(() -> new EntityNotFoundException("회원이 존재하지 않습니다. id=" + id));
     }
 
+    @Transactional
     public void updateMember(Long id, String email, String password) {
         Member member = getMember(id);
         member.update(email, passwordEncoder.encode(password));
-        memberRepository.save(member);
     }
 
+    @Transactional
     public void deductPoint(Long id, int amount) {
         Member member = getMember(id);
         member.deductPoint(amount);
-        memberRepository.save(member);
     }
 
+    @Transactional
     public void chargePoint(Long id, int amount) {
         Member member = getMember(id);
         member.chargePoint(amount);
-        memberRepository.save(member);
     }
 
+    @Transactional
     public void removeMember(Long id) {
         getMember(id);
         memberRepository.deleteById(id);

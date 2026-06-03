@@ -8,10 +8,12 @@ import gift.product.ProductService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 
 @Service
+@Transactional(readOnly = true)
 public class OptionService {
     private static final Logger log = LoggerFactory.getLogger(OptionService.class);
     private final OptionRepository optionRepository;
@@ -27,6 +29,7 @@ public class OptionService {
         return optionRepository.findByProductId(productId);
     }
 
+    @Transactional
     public Option addOption(Long productId, OptionRequest request) {
         validateName(request.name());
 
@@ -41,14 +44,16 @@ public class OptionService {
         return saved;
     }
 
+    @Transactional
     public Option subtractQuantity(Long optionId, int quantity) {
         Option option = optionRepository.findById(optionId)
             .orElseThrow(() -> new EntityNotFoundException("옵션이 존재하지 않습니다. id=" + optionId));
         option.subtractQuantity(quantity);
         log.info("재고 차감. optionId={}, quantity={}, remaining={}", optionId, quantity, option.getQuantity());
-        return optionRepository.save(option);
+        return option;
     }
 
+    @Transactional
     public void removeOption(Long productId, Long optionId) {
         productService.getProduct(productId);
 

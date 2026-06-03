@@ -9,8 +9,10 @@ import org.slf4j.LoggerFactory;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 @Service
+@Transactional(readOnly = true)
 public class WishService {
     private static final Logger log = LoggerFactory.getLogger(WishService.class);
     private final WishRepository wishRepository;
@@ -25,6 +27,7 @@ public class WishService {
         return wishRepository.findByMemberId(memberId, pageable);
     }
 
+    @Transactional
     public Wish addWish(Long memberId, Long productId) {
         return wishRepository.findByMemberIdAndProductId(memberId, productId)
             .orElseGet(() -> {
@@ -35,6 +38,7 @@ public class WishService {
             });
     }
 
+    @Transactional
     public void deleteByIdAndMemberId(Long id, Long memberId) {
         Wish wish = getWish(id);
         if (!wish.getMemberId().equals(memberId)) {
@@ -50,6 +54,7 @@ public class WishService {
             .orElseThrow(() -> new EntityNotFoundException("위시가 존재하지 않습니다. id=" + id));
     }
 
+    @Transactional
     public void removeByMemberAndProduct(Long memberId, Long productId) {
         wishRepository.findByMemberIdAndProductId(memberId, productId)
             .ifPresent(wishRepository::delete);

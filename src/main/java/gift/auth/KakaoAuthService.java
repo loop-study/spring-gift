@@ -5,9 +5,11 @@ import gift.member.MemberRepository;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.util.UriComponentsBuilder;
 
 @Service
+@Transactional(readOnly = true)
 public class KakaoAuthService {
     private static final Logger log = LoggerFactory.getLogger(KakaoAuthService.class);
     private final MemberRepository memberRepository;
@@ -37,6 +39,7 @@ public class KakaoAuthService {
             .toUriString();
     }
 
+    @Transactional
     public String kakaoLogin(String code) {
         KakaoLoginClient.KakaoTokenResponse kakaoToken = kakaoLoginClient.requestAccessToken(code);
         KakaoLoginClient.KakaoUserResponse kakaoUser = kakaoLoginClient.requestUserInfo(kakaoToken.accessToken());

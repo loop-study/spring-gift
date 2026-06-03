@@ -9,10 +9,12 @@ import org.slf4j.LoggerFactory;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 
 @Service
+@Transactional(readOnly = true)
 public class ProductService {
     private static final Logger log = LoggerFactory.getLogger(ProductService.class);
     private final ProductRepository productRepository;
@@ -40,6 +42,7 @@ public class ProductService {
         return categoryService.getCategory(id);
     }
 
+    @Transactional
     public Product addProduct(ProductRequest request) {
         validateName(request.name());
         Category category = getCategoryById(request.categoryId());
@@ -48,6 +51,7 @@ public class ProductService {
         return saved;
     }
 
+    @Transactional
     public Product addProduct(String name, int price, String imageUrl, Long categoryId) {
         Category category = getCategoryById(categoryId);
         Product saved = productRepository.save(new Product(name, price, imageUrl, category));
@@ -55,23 +59,25 @@ public class ProductService {
         return saved;
     }
 
+    @Transactional
     public Product updateProduct(Long id, ProductRequest request) {
         validateName(request.name());
         Product product = getProduct(id);
         Category category = getCategoryById(request.categoryId());
         product.update(request.name(), request.price(), request.imageUrl(), category);
         log.info("상품 수정. id={}, name={}", id, request.name());
-        return productRepository.save(product);
+        return product;
     }
 
+    @Transactional
     public void updateProduct(Long id, String name, int price, String imageUrl, Long categoryId) {
         Product product = getProduct(id);
         Category category = getCategoryById(categoryId);
         product.update(name, price, imageUrl, category);
-        productRepository.save(product);
         log.info("상품 수정. id={}, name={}", id, name);
     }
 
+    @Transactional
     public void removeProduct(Long id) {
         getProduct(id);
         productRepository.deleteById(id);
