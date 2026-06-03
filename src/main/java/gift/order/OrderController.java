@@ -27,8 +27,7 @@ public class OrderController {
         @LoginMember Member member,
         Pageable pageable
     ) {
-        var orders = orderService.getMemberOrders(member.getId(), pageable).map(OrderResponse::from);
-        return ResponseEntity.ok(orders);
+        return ResponseEntity.ok(orderService.getMemberOrders(member.getId(), pageable));
     }
 
     @PostMapping
@@ -36,9 +35,8 @@ public class OrderController {
         @LoginMember Member member,
         @Valid @RequestBody OrderRequest request
     ) {
-        Order saved = orderService.createOrder(member, request);
-
-        return ResponseEntity.created(URI.create("/api/orders/" + saved.getId()))
-            .body(OrderResponse.from(saved));
+        OrderResponse saved = orderService.createOrder(member, request);
+        return ResponseEntity.created(URI.create("/api/orders/" + saved.id()))
+            .body(saved);
     }
 }

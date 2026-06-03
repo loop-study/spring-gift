@@ -27,24 +27,26 @@ public class CategoryService {
             .orElseThrow(() -> new EntityNotFoundException("카테고리가 존재하지 않습니다. id=" + id));
     }
 
-    public List<Category> getAllCategories() {
-        return categoryRepository.findAll();
+    public List<CategoryResponse> getAllCategories() {
+        return categoryRepository.findAll().stream()
+            .map(CategoryResponse::from)
+            .toList();
     }
 
     @Transactional
-    public Category addCategory(CategoryRequest request) {
+    public CategoryResponse addCategory(CategoryRequest request) {
         Category saved = categoryRepository.save(request.toEntity());
         log.info("카테고리 추가. id={}, name={}", saved.getId(), saved.getName());
-        return saved;
+        return CategoryResponse.from(saved);
     }
 
     @Transactional
-    public Category updateCategory(Long id, CategoryRequest request) {
+    public CategoryResponse updateCategory(Long id, CategoryRequest request) {
         Category category = categoryRepository.findById(id)
             .orElseThrow(() -> new EntityNotFoundException("카테고리가 존재하지 않습니다. id=" + id));
         category.update(request.name(), request.color(), request.imageUrl(), request.description());
         log.info("카테고리 수정. id={}, name={}", id, request.name());
-        return category;
+        return CategoryResponse.from(category);
     }
 
     @Transactional

@@ -29,8 +29,7 @@ public class WishController {
         @LoginMember Member member,
         Pageable pageable
     ) {
-        var wishes = wishService.getMemberWishes(member.getId(), pageable).map(WishResponse::from);
-        return ResponseEntity.ok(wishes);
+        return ResponseEntity.ok(wishService.getMemberWishes(member.getId(), pageable));
     }
 
     @PostMapping
@@ -38,8 +37,7 @@ public class WishController {
         @LoginMember Member member,
         @Valid @RequestBody WishRequest request
     ) {
-        var wish = wishService.addWish(member.getId(), request.productId());
-        return ResponseEntity.ok(WishResponse.from(wish));
+        return ResponseEntity.ok(wishService.addWish(member.getId(), request.productId()));
     }
 
     @DeleteMapping("/{id}")

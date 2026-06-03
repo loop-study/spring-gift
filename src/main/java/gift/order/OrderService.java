@@ -37,12 +37,12 @@ public class OrderService {
         this.eventPublisher = eventPublisher;
     }
 
-    public Page<Order> getMemberOrders(Long memberId, Pageable pageable) {
-        return orderRepository.findByMemberId(memberId, pageable);
+    public Page<OrderResponse> getMemberOrders(Long memberId, Pageable pageable) {
+        return orderRepository.findByMemberId(memberId, pageable).map(OrderResponse::from);
     }
 
     @Transactional
-    public Order createOrder(Member member, OrderRequest request) {
+    public OrderResponse createOrder(Member member, OrderRequest request) {
         // subtract stock
         Option option = optionService.subtractQuantity(request.optionId(), request.quantity());
 
@@ -63,6 +63,6 @@ public class OrderService {
         eventPublisher.publishEvent(
             new OrderCreatedEvent(member.getKakaoAccessToken(), saved, option.getProduct()));
 
-        return saved;
+        return OrderResponse.from(saved);
     }
 }

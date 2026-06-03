@@ -23,19 +23,20 @@ public class WishService {
         this.productService = productService;
     }
 
-    public Page<Wish> getMemberWishes(Long memberId, Pageable pageable) {
-        return wishRepository.findByMemberId(memberId, pageable);
+    public Page<WishResponse> getMemberWishes(Long memberId, Pageable pageable) {
+        return wishRepository.findByMemberId(memberId, pageable).map(WishResponse::from);
     }
 
     @Transactional
-    public Wish addWish(Long memberId, Long productId) {
-        return wishRepository.findByMemberIdAndProductId(memberId, productId)
+    public WishResponse addWish(Long memberId, Long productId) {
+        Wish wish = wishRepository.findByMemberIdAndProductId(memberId, productId)
             .orElseGet(() -> {
                 Product product = productService.getProduct(productId);
                 Wish saved = wishRepository.save(new Wish(memberId, product));
                 log.info("위시 추가. memberId={}, productId={}", memberId, productId);
                 return saved;
             });
+        return WishResponse.from(wish);
     }
 
     @Transactional

@@ -40,10 +40,10 @@ public class OptionController {
         @PathVariable Long productId,
         @Valid @RequestBody OptionRequest request
     ) {
-        Option saved = optionService.addOption(productId, request);
-        URI location = URI.create("/api/products/" + productId + "/options/" + saved.getId());
+        OptionResponse saved = optionService.addOption(productId, request);
+        URI location = URI.create("/api/products/" + productId + "/options/" + saved.id());
         return ResponseEntity.created(location)
-            .body(OptionResponse.from(saved));
+            .body(saved);
     }
 
     @DeleteMapping(path = "/{optionId}")

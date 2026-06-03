@@ -30,7 +30,7 @@ public class OptionService {
     }
 
     @Transactional
-    public Option addOption(Long productId, OptionRequest request) {
+    public OptionResponse addOption(Long productId, OptionRequest request) {
         validateName(request.name());
 
         Product product = productService.getProduct(productId);
@@ -41,7 +41,7 @@ public class OptionService {
 
         Option saved = optionRepository.save(new Option(product, request.name(), request.quantity()));
         log.info("옵션 추가. optionId={}, productId={}, name={}", saved.getId(), productId, request.name());
-        return saved;
+        return OptionResponse.from(saved);
     }
 
     @Transactional

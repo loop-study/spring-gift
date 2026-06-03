@@ -36,17 +36,23 @@ public class ProductService {
         this.orderRepository = orderRepository;
     }
 
-    public Page<Product> getAllProducts(Pageable pageable) {
-        return productRepository.findAll(pageable);
+    public Page<ProductResponse> getAllProducts(Pageable pageable) {
+        return productRepository.findAll(pageable).map(ProductResponse::from);
     }
 
-    public List<Product> getAllProducts() {
-        return productRepository.findAll();
+    public List<ProductResponse> getAllProducts() {
+        return productRepository.findAll().stream()
+            .map(ProductResponse::from)
+            .toList();
     }
 
     public Product getProduct(Long id) {
         return productRepository.findById(id)
             .orElseThrow(() -> new EntityNotFoundException("상품이 존재하지 않습니다. id=" + id));
+    }
+
+    public ProductResponse getProductResponse(Long id) {
+        return ProductResponse.from(getProduct(id));
     }
 
     public boolean existsByCategoryId(Long categoryId) {
@@ -58,12 +64,12 @@ public class ProductService {
     }
 
     @Transactional
-    public Product addProduct(ProductRequest request) {
+    public ProductResponse addProduct(ProductRequest request) {
         validateName(request.name());
         Category category = getCategoryById(request.categoryId());
         Product saved = productRepository.save(request.toEntity(category));
         log.info("상품 추가. id={}, name={}", saved.getId(), saved.getName());
-        return saved;
+        return ProductResponse.from(saved);
     }
 
     @Transactional
@@ -75,13 +81,13 @@ public class ProductService {
     }
 
     @Transactional
-    public Product updateProduct(Long id, ProductRequest request) {
+    public ProductResponse updateProduct(Long id, ProductRequest request) {
         validateName(request.name());
         Product product = getProduct(id);
         Category category = getCategoryById(request.categoryId());
         product.update(request.name(), request.price(), request.imageUrl(), category);
         log.info("상품 수정. id={}, name={}", id, request.name());
-        return product;
+        return ProductResponse.from(product);
     }
 
     @Transactional
