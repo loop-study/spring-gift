@@ -4,6 +4,8 @@ import gift.category.Category;
 import gift.category.CategoryService;
 import gift.exception.EntityNotFoundException;
 import gift.exception.ValidationException;
+import gift.order.OrderRepository;
+import gift.wish.WishRepository;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.data.domain.Page;
@@ -19,10 +21,19 @@ public class ProductService {
     private static final Logger log = LoggerFactory.getLogger(ProductService.class);
     private final ProductRepository productRepository;
     private final CategoryService categoryService;
+    private final WishRepository wishRepository;
+    private final OrderRepository orderRepository;
 
-    public ProductService(ProductRepository productRepository, CategoryService categoryService) {
+    public ProductService(
+        ProductRepository productRepository,
+        CategoryService categoryService,
+        WishRepository wishRepository,
+        OrderRepository orderRepository
+    ) {
         this.productRepository = productRepository;
         this.categoryService = categoryService;
+        this.wishRepository = wishRepository;
+        this.orderRepository = orderRepository;
     }
 
     public Page<Product> getAllProducts(Pageable pageable) {
@@ -36,6 +47,10 @@ public class ProductService {
     public Product getProduct(Long id) {
         return productRepository.findById(id)
             .orElseThrow(() -> new EntityNotFoundException("상품이 존재하지 않습니다. id=" + id));
+    }
+
+    public boolean existsByCategoryId(Long categoryId) {
+        return productRepository.existsByCategoryId(categoryId);
     }
 
     private Category getCategoryById(Long id) {
@@ -80,6 +95,13 @@ public class ProductService {
     @Transactional
     public void removeProduct(Long id) {
         getProduct(id);
+        // TODO: 위시 등록된 상품 삭제 정책 확인 필요 (cascade 삭제 vs 삭제 거부)
+        // if (wishRepository.existsByProductId(id)) {
+        //     throw new ValidationException("위시리스트에 등록된 상품은 삭제할 수 없습니다.");
+        // }
+        if (orderRepository.existsByOptionProductId(id)) {
+            throw new ValidationException("주문 내역이 있는 상품은 삭제할 수 없습니다.");
+        }
         productRepository.deleteById(id);
         log.info("상품 삭제. id={}", id);
     }

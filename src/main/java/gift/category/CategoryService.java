@@ -1,6 +1,8 @@
 package gift.category;
 
 import gift.exception.EntityNotFoundException;
+import gift.exception.ValidationException;
+import gift.product.ProductRepository;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
@@ -13,9 +15,11 @@ import java.util.List;
 public class CategoryService {
     private static final Logger log = LoggerFactory.getLogger(CategoryService.class);
     private final CategoryRepository categoryRepository;
+    private final ProductRepository productRepository;
 
-    public CategoryService(CategoryRepository categoryRepository) {
+    public CategoryService(CategoryRepository categoryRepository, ProductRepository productRepository) {
         this.categoryRepository = categoryRepository;
+        this.productRepository = productRepository;
     }
 
     public Category getCategory(Long id) {
@@ -46,6 +50,9 @@ public class CategoryService {
     @Transactional
     public void removeCategory(Long id) {
         getCategory(id);
+        if (productRepository.existsByCategoryId(id)) {
+            throw new ValidationException("카테고리에 등록된 상품이 있어 삭제할 수 없습니다.");
+        }
         categoryRepository.deleteById(id);
         log.info("카테고리 삭제. id={}", id);
     }
