@@ -24,9 +24,11 @@ public class OptionService {
         this.productService = productService;
     }
 
-    public List<Option> getProductOptions(Long productId) {
+    public List<OptionResponse> getProductOptions(Long productId) {
         productService.getProduct(productId);
-        return optionRepository.findByProductId(productId);
+        return optionRepository.findByProductId(productId).stream()
+            .map(OptionResponse::from)
+            .toList();
     }
 
     @Transactional

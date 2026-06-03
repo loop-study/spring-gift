@@ -28,11 +28,7 @@ public class OptionController {
 
     @GetMapping
     public ResponseEntity<List<OptionResponse>> getOptions(@PathVariable Long productId) {
-        List<Option> options = optionService.getProductOptions(productId);
-        List<OptionResponse> responses = options.stream()
-            .map(OptionResponse::from)
-            .toList();
-        return ResponseEntity.ok(responses);
+        return ResponseEntity.ok(optionService.getProductOptions(productId));
     }
 
     @PostMapping
