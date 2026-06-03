@@ -50,11 +50,12 @@ public class OrderService {
         Order order = new Order(option, member.getId(), request.quantity(), request.message());
 
         // deduct points (domain calculates total price)
-        memberService.deductPoint(member.getId(), order.calculateTotalPrice());
+        int totalPrice = order.calculateTotalPrice();
+        memberService.deductPoint(member.getId(), totalPrice);
 
         Order saved = orderRepository.save(order);
         log.info("주문 생성. orderId={}, memberId={}, optionId={}, quantity={}, totalPrice={}",
-            saved.getId(), member.getId(), request.optionId(), request.quantity(), order.calculateTotalPrice());
+            saved.getId(), member.getId(), request.optionId(), request.quantity(), totalPrice);
 
         // remove wish if exists
         wishService.removeByMemberAndProduct(member.getId(), option.getProduct().getId());
