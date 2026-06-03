@@ -24,7 +24,7 @@ public class AdminProductController {
 
     @GetMapping
     public String list(Model model) {
-        model.addAttribute("products", productService.getAllProducts());
+        model.addAttribute("products", productService.getAllAdminProducts());
         return "product/list";
     }
 
@@ -54,7 +54,7 @@ public class AdminProductController {
 
     @GetMapping("/{id}/edit")
     public String editForm(@PathVariable Long id, Model model) {
-        Product product = productService.getProduct(id);
+        AdminProductResponse product = productService.getAdminProduct(id);
         model.addAttribute("product", product);
         model.addAttribute("categories", categoryService.getAllCategories());
         return "product/edit";
@@ -69,7 +69,7 @@ public class AdminProductController {
         @RequestParam Long categoryId,
         Model model
     ) {
-        Product product = productService.getProduct(id);
+        AdminProductResponse product = productService.getAdminProduct(id);
 
         List<String> errors = ProductNameValidator.validate(name, true);
         if (!errors.isEmpty()) {
@@ -105,7 +105,7 @@ public class AdminProductController {
 
     private void populateEditForm(
         Model model,
-        Product product,
+        AdminProductResponse product,
         List<String> errors,
         String name,
         int price,

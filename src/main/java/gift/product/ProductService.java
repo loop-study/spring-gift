@@ -46,6 +46,16 @@ public class ProductService {
             .toList();
     }
 
+    public List<AdminProductResponse> getAllAdminProducts() {
+        return productRepository.findAll().stream()
+            .map(AdminProductResponse::from)
+            .toList();
+    }
+
+    public AdminProductResponse getAdminProduct(Long id) {
+        return AdminProductResponse.from(getProduct(id));
+    }
+
     public Product getProduct(Long id) {
         return productRepository.findById(id)
             .orElseThrow(() -> new EntityNotFoundException("상품이 존재하지 않습니다. id=" + id));
