@@ -112,9 +112,9 @@ public class ProductService {
     public void removeProduct(Long id) {
         getProduct(id);
         // TODO: 위시 등록된 상품 삭제 정책 확인 필요 (cascade 삭제 vs 삭제 거부)
-        // if (wishRepository.existsByProductId(id)) {
-        //     throw new ValidationException("위시리스트에 등록된 상품은 삭제할 수 없습니다.");
-        // }
+        if (wishRepository.existsByProductId(id)) {
+            throw new ValidationException("위시리스트에 등록된 상품은 삭제할 수 없습니다.");
+        }
         if (orderRepository.existsByOptionProductId(id)) {
             throw new ValidationException("주문 내역이 있는 상품은 삭제할 수 없습니다.");
         }
