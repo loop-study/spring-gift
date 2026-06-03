@@ -40,12 +40,6 @@ public class ProductService {
         return productRepository.findAll(pageable).map(ProductResponse::from);
     }
 
-    public List<ProductResponse> getAllProducts() {
-        return productRepository.findAll().stream()
-            .map(ProductResponse::from)
-            .toList();
-    }
-
     public List<AdminProductResponse> getAllAdminProducts() {
         return productRepository.findAll().stream()
             .map(AdminProductResponse::from)
@@ -63,10 +57,6 @@ public class ProductService {
 
     public ProductResponse getProductResponse(Long id) {
         return ProductResponse.from(getProduct(id));
-    }
-
-    public boolean existsByCategoryId(Long categoryId) {
-        return productRepository.existsByCategoryId(categoryId);
     }
 
     private Category getCategoryById(Long id) {
