@@ -139,7 +139,7 @@
 - [ ] 카테고리/상품 삭제 시 연결 엔티티 확인 후 400 반환
 - [ ] Service 파라미터에서 Request DTO 제거 → 개별 파라미터로 변경
 - [ ] 의미없는 INFO 로그 제거 (KakaoLoginClient, KakaoMessageClient)
-- [ ] 로깅 횡단 처리 — AOP 도입
+- [ ] ~~로깅 횡단 처리~~ — 생략. 프로젝트 규모에서 과도. 불필요한 INFO 로그는 Step 4에서 해소.
 - [ ] 테스트 코드 `var` → 명시적 타입 변경
 
 ---
