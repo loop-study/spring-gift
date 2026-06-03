@@ -130,6 +130,18 @@
 - [ ] ~~CORS 설정~~ — 생략. 현재 같은 도메인에서만 사용하므로 불필요. 프론트엔드 분리 시 도입.
 - [ ] ~~로그인 시도 횟수 제한~~ — 생략. Rate limiter 인프라가 필요하여 과제 규모 초과.
 
+### Phase 6 — 1차 코드 리뷰 반영
+
+> 목표: PR #8 리뷰 코멘트 반영 + 로깅 횡단 처리.
+> 상세 플랜은 [docs/phase6-plan.md](docs/phase6-plan.md)를 참고한다.
+
+- [ ] `@Transactional` 적용 + 불필요한 `save()` 제거
+- [ ] 카테고리/상품 삭제 시 연결 엔티티 확인 후 400 반환
+- [ ] Service 파라미터에서 Request DTO 제거 → 개별 파라미터로 변경
+- [ ] 의미없는 INFO 로그 제거 (KakaoLoginClient, KakaoMessageClient)
+- [ ] 로깅 횡단 처리 — AOP 도입
+- [ ] 테스트 코드 `var` → 명시적 타입 변경
+
 ---
 
 ## 구현 전략
