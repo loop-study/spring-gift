@@ -1,22 +1,17 @@
 package gift.product;
 
+import gift.ServiceTest;
 import gift.exception.EntityNotFoundException;
 import gift.exception.ValidationException;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
-import org.springframework.test.context.ActiveProfiles;
-import org.springframework.transaction.annotation.Transactional;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
-@SpringBootTest
-@ActiveProfiles("test")
-@Transactional
-class ProductServiceTest {
+class ProductServiceTest extends ServiceTest {
 
     @Autowired
     private ProductService productService;

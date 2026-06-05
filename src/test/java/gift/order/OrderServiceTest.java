@@ -1,21 +1,16 @@
 package gift.order;
 
+import gift.ServiceTest;
 import gift.member.Member;
 import gift.member.MemberService;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
-import org.springframework.test.context.ActiveProfiles;
-import org.springframework.transaction.annotation.Transactional;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
-@SpringBootTest
-@ActiveProfiles("test")
-@Transactional
-class OrderServiceTest {
+class OrderServiceTest extends ServiceTest {
 
     @Autowired
     private OrderService orderService;
