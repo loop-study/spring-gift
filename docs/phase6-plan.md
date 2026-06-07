@@ -72,6 +72,25 @@ PR #8에 대한 리뷰 코멘트 9개 중 코드 수정이 필요한 5개 항목
 | 5 | 🟢 중복 | `OrderService:55` | `calculateTotalPrice()` 두 번 호출 — 로컬 변수로 통합 |
 | 6 | 🟢 죽은 코드 | `ProductService:53` | `existsByCategoryId()` 호출자 없음 — 제거 |
 
+### Step 7 — DB에서 확인 가능한 CRUD 성공 로그 제거 [2차 리뷰]
+
+**목표**: DB 조회로 확인 가능한 CRUD 성공 로그(log.info)를 제거하여 운영 시 노이즈를 줄인다. 보안 감사, 비즈니스 핵심 이벤트, 외부 API 호출 결과 로그는 유지한다.
+
+**삭제 대상 (14개)**:
+- `CategoryService`: 카테고리 추가/수정/삭제
+- `ProductService`: 상품 추가(2곳)/수정(2곳)/삭제
+- `OptionService`: 옵션 추가/삭제, 재고 차감
+- `WishService`: 위시 추가/삭제
+- `MemberService`: 회원가입 성공
+
+**유지 대상 (4개)**:
+- `AuthService`: 로그인 성공 (보안 감사)
+- `KakaoAuthService`: 카카오 로그인 성공 (보안 감사)
+- `OrderService`: 주문 생성 (비즈니스 핵심 이벤트, 금액 포함)
+- `OrderNotificationListener`: 카카오 메시지 발송 성공 (외부 API 호출 결과)
+
+**검증**: 기존 테스트 전체 통과 확인
+
 ### Step 6 — 테스트 코드 var → 명시적 타입 변경 [리뷰 #8]
 
 **목표**: 테스트 코드에서 `var` 사용을 명시적 타입으로 변경하여 프로젝트 코드 스타일과 통일한다.
