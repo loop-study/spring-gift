@@ -33,7 +33,6 @@ public class WishService {
             .orElseGet(() -> {
                 Product product = productService.getProduct(productId);
                 Wish saved = wishRepository.save(new Wish(memberId, product));
-                log.info("위시 추가. memberId={}, productId={}", memberId, productId);
                 return saved;
             });
         return WishResponse.from(wish);
@@ -47,7 +46,6 @@ public class WishService {
             throw new ForbiddenException("다른 사용자의 위시를 삭제할 수 없습니다.");
         }
         wishRepository.delete(wish);
-        log.info("위시 삭제. wishId={}, memberId={}", id, memberId);
     }
 
     public Wish getWish(Long id) {

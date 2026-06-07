@@ -5,8 +5,6 @@ import gift.exception.EntityNotFoundException;
 import gift.exception.ValidationException;
 import gift.product.Product;
 import gift.product.ProductService;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -15,7 +13,6 @@ import java.util.List;
 @Service
 @Transactional(readOnly = true)
 public class OptionService {
-    private static final Logger log = LoggerFactory.getLogger(OptionService.class);
     private final OptionRepository optionRepository;
     private final ProductService productService;
 
@@ -42,7 +39,6 @@ public class OptionService {
         }
 
         Option saved = optionRepository.save(new Option(product, request.name(), request.quantity()));
-        log.info("옵션 추가. optionId={}, productId={}, name={}", saved.getId(), productId, request.name());
         return OptionResponse.from(saved);
     }
 
@@ -51,7 +47,6 @@ public class OptionService {
         Option option = optionRepository.findById(optionId)
             .orElseThrow(() -> new EntityNotFoundException("옵션이 존재하지 않습니다. id=" + optionId));
         option.subtractQuantity(quantity);
-        log.info("재고 차감. optionId={}, quantity={}, remaining={}", optionId, quantity, option.getQuantity());
         return option;
     }
 
@@ -72,7 +67,6 @@ public class OptionService {
         }
 
         optionRepository.delete(option);
-        log.info("옵션 삭제. optionId={}, productId={}", optionId, productId);
     }
 
     private void validateName(String name) {

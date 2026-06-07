@@ -2,8 +2,6 @@ package gift.member;
 
 import gift.exception.DuplicateEntityException;
 import gift.exception.EntityNotFoundException;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -13,7 +11,6 @@ import java.util.List;
 @Service
 @Transactional(readOnly = true)
 public class MemberService {
-    private static final Logger log = LoggerFactory.getLogger(MemberService.class);
     private final MemberRepository memberRepository;
     private final BCryptPasswordEncoder passwordEncoder;
 
@@ -29,7 +26,6 @@ public class MemberService {
         }
         String encoded = passwordEncoder.encode(request.password());
         Member member = memberRepository.save(new Member(request.email(), encoded));
-        log.info("회원가입 성공. email={}", member.getEmail());
         return member;
     }
 
